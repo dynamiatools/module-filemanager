@@ -1,0 +1,25 @@
+view: table
+beanClass: com.dynamia.tools.io.FileInfo
+autofields: false
+
+
+fields:
+    
+    extension:
+        label: T
+        component: iconimage
+        params:
+            header:
+                width: 20px
+    name:
+    fileSize:
+        label: Size
+        params:
+            header:
+                width: 100px
+    fileDate:
+        label: Date
+        params:
+            header:
+                width: 200px
+    
