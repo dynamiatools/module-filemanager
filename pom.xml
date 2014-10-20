@@ -13,6 +13,8 @@
         
         <dynatools.version>2.1.0.Final</dynatools.version>
     </properties>
+    
+    
     <dependencies>
         <dependency>
             <groupId>com.dynamia.tools</groupId>
@@ -20,5 +22,12 @@
             <version>${dynatools.version}</version>
         </dependency>
     </dependencies>
+    
+    <distributionManagement>
+        <repository>
+            <id>nexus</id>
+            <url>http://server.dynamiasoluciones.com:8081/nexus/content/repositories/releases</url>
+        </repository>        
+    </distributionManagement>
   
 </project>
