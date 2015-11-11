@@ -29,7 +29,7 @@ public class UploadFileAction extends FileManagerAction {
     public UploadFileAction() {
         setName("Upload File");
         setImage("add");
-        setIndex(0);
+        setPosition(3);
     }
 
     @Override

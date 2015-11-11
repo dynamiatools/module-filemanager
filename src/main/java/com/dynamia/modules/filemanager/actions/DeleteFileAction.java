@@ -5,6 +5,9 @@
  */
 package com.dynamia.modules.filemanager.actions;
 
+import java.io.File;
+import java.util.List;
+
 import com.dynamia.modules.filemanager.FileManager;
 import com.dynamia.modules.filemanager.FileManagerAction;
 import com.dynamia.tools.io.FileInfo;
@@ -21,29 +24,44 @@ import com.dynamia.tools.web.util.Callback;
 @InstallAction
 public class DeleteFileAction extends FileManagerAction {
 
-    public DeleteFileAction() {
-        setName("Delete Selected File");
-        setImage("delete");
-        setIndex(1);
-    }
+	public DeleteFileAction() {
+		setName("Delete Selected File");
+		setImage("delete");
+		setPosition(4);
+	}
 
-    @Override
-    public void actionPerformed(ActionEvent evt) {
-        final FileInfo fileInfo = (FileInfo) evt.getData();
-        final FileManager mgr = (FileManager) evt.getSource();
-        if (fileInfo != null) {
-            UIMessages.showQuestion("Are you sure to delete " + fileInfo.getName() + "?", new Callback() {
+	@Override
+	public void actionPerformed(ActionEvent evt) {
 
-                @Override
-                public void doSomething() {
-                    fileInfo.getFile().delete();
-                    mgr.updateUI();
-                    UIMessages.showMessage(fileInfo.getName() + " deleted successfull");
-                }
-            });
-        } else {
-            UIMessages.showMessage("Select file to delete", MessageType.WARNING);
-        }
-    }
+		final FileManager mgr = (FileManager) evt.getSource();
+
+		if (evt.getData() instanceof FileInfo) {
+			final FileInfo fileInfo = (FileInfo) evt.getData();
+			UIMessages.showQuestion("Are you sure to delete " + fileInfo.getName() + "?", new Callback() {
+
+				@Override
+				public void doSomething() {
+					fileInfo.getFile().delete();
+					mgr.updateUI();
+					UIMessages.showMessage(fileInfo.getName() + " deleted successfull");
+				}
+			});
+		} else if (evt.getData() instanceof List) {
+			final List<FileInfo> files = (List<FileInfo>) evt.getData();
+			if (!files.isEmpty()) {
+				UIMessages.showQuestion("Are you sure to delete " + files.size() + " files ?", new Callback() {
+
+					@Override
+					public void doSomething() {
+						for (FileInfo file : files) {
+							file.getFile().delete();
+						}
+						mgr.updateUI();
+						UIMessages.showMessage(files.size() + " files deleted successfull");
+					}
+				});
+			}
+		}
+	}
 
 }

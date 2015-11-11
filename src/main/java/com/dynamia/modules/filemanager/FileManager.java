@@ -9,6 +9,8 @@ import java.io.File;
 import java.io.FileFilter;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -18,15 +20,18 @@ import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Center;
+import org.zkoss.zul.Div;
+import org.zkoss.zul.Label;
+import org.zkoss.zul.Listitem;
 import org.zkoss.zul.North;
 import org.zkoss.zul.West;
-import org.zkoss.zul.Window;
 
 import com.dynamia.modules.filemanager.ui.DirectoryTree;
 import com.dynamia.tools.integration.Containers;
 import com.dynamia.tools.io.FileInfo;
 import com.dynamia.tools.viewers.util.Viewers;
 import com.dynamia.tools.viewers.zk.table.TableView;
+import com.dynamia.tools.web.actions.Action;
 import com.dynamia.tools.web.actions.ActionEvent;
 import com.dynamia.tools.web.actions.ActionEventBuilder;
 import com.dynamia.tools.web.ui.ActionToolbar;
@@ -35,14 +40,22 @@ import com.dynamia.tools.web.ui.ActionToolbar;
  *
  * @author mario_2
  */
-public class FileManager extends Window implements ActionEventBuilder {
+public class FileManager extends Div implements ActionEventBuilder {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5270252199212721490L;
 	private Borderlayout layout;
 	private ActionToolbar toolbar;
 	private File rootDirectory;
 	private DirectoryTree directoryTree;
 	private TableView<FileInfo> tableFiles;
 	private File currentDirectory;
+
+	public FileManager() {
+
+	}
 
 	public FileManager(File directory) {
 		this.rootDirectory = directory;
@@ -54,8 +67,18 @@ public class FileManager extends Window implements ActionEventBuilder {
 	}
 
 	private void initLayout() {
+
+		getChildren().clear();
 		setVflex("1");
 		setHflex("1");
+
+		if (rootDirectory == null || !rootDirectory.exists()) {
+			Label error = new Label("Root Directory is null or dont exists");
+			error.setStyle("color:red");
+			error.setParent(this);
+			return;
+		}
+
 		layout = new Borderlayout();
 		layout.appendChild(new North());
 		layout.appendChild(new Center());
@@ -97,7 +120,32 @@ public class FileManager extends Window implements ActionEventBuilder {
 
 	@Override
 	public ActionEvent buildActionEvent(Object source, Map<String, Object> params) {
-		return new ActionEvent(tableFiles.getSelected(), this);
+		return new ActionEvent(tableFiles.isMultiple() ? getSelecteds() : tableFiles.getSelected(), this);
+	}
+
+	public String getSelectedFilePath() {
+		FileInfo fileInfo = tableFiles.getSelected();
+		if (fileInfo != null) {
+			String path = fileInfo.getFile().getPath();
+			path = path.substring(path.indexOf(rootDirectory.getName()) + rootDirectory.getName().length() + 1);
+			path = path.replace(" ", "%20");
+			return path;
+		} else {
+			return "";
+		}
+
+	}
+
+	private List<FileInfo> getSelecteds() {
+		List<FileInfo> selecteds = new ArrayList<>();
+
+		if (tableFiles.getSelectedCount() > 0) {
+			for (Listitem item : tableFiles.getSelectedItems()) {
+				selecteds.add((FileInfo) item.getValue());
+			}
+		}
+
+		return selecteds;
 	}
 
 	private void loadFiles(File selectedDirectory) {
@@ -112,22 +160,49 @@ public class FileManager extends Window implements ActionEventBuilder {
 			});
 
 			List<FileInfo> fileInfos = new ArrayList<>();
-			for (File file : files) {
-				fileInfos.add(new FileInfo(file));
+			if (files != null) {
+				for (File file : files) {
+					fileInfos.add(new FileInfo(file));
+				}
 			}
 			tableFiles.setValue(fileInfos);
 		}
 	}
 
 	private void loadActions() {
+		List<Action> actions = new ArrayList<>();
 		for (FileManagerAction action : Containers.get().findObjects(FileManagerAction.class)) {
+			actions.add(action);
+		}
+		Collections.sort(actions, new Comparator<Action>() {
+
+			@Override
+			public int compare(Action o1, Action o2) {
+				Double pos1 = o1.getPosition();
+				Double pos2 = o2.getPosition();
+				return pos1.compareTo(pos2);
+			}
+		});
+
+		for (Action action : actions) {
 			toolbar.addAction(action);
+
 		}
 	}
 
 	public void reload() {
 		directoryTree.reload();
 		updateUI();
+	}
+
+	public void setRootDirectory(File rootDirectory) {
+		this.rootDirectory = rootDirectory;
+		this.currentDirectory = rootDirectory;
+		initLayout();
+	}
+
+	public void setRootDirectory(String rootPath) {
+		setRootDirectory(new File(rootPath));
 	}
 
 	public void reloadSelected() {
@@ -145,6 +220,14 @@ public class FileManager extends Window implements ActionEventBuilder {
 
 	public void updateUI() {
 		loadFiles(getCurrentDirectory());
+	}
+
+	public TableView<FileInfo> getTableFiles() {
+		return tableFiles;
+	}
+
+	public DirectoryTree getDirectoryTree() {
+		return directoryTree;
 	}
 
 }
