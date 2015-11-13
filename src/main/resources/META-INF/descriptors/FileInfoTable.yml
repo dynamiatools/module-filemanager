@@ -1,5 +1,5 @@
 view: table
-beanClass: com.dynamia.tools.io.FileInfo
+beanClass: tools.dynamia.io.FileInfo
 autofields: false
 
 
