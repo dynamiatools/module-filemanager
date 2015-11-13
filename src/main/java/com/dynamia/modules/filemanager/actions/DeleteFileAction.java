@@ -5,17 +5,16 @@
  */
 package com.dynamia.modules.filemanager.actions;
 
-import java.io.File;
+
 import java.util.List;
 
 import com.dynamia.modules.filemanager.FileManager;
 import com.dynamia.modules.filemanager.FileManagerAction;
-import com.dynamia.tools.io.FileInfo;
-import com.dynamia.tools.web.actions.ActionEvent;
-import com.dynamia.tools.web.actions.InstallAction;
-import com.dynamia.tools.web.ui.MessageType;
-import com.dynamia.tools.web.ui.UIMessages;
-import com.dynamia.tools.web.util.Callback;
+
+import tools.dynamia.actions.ActionEvent;
+import tools.dynamia.actions.InstallAction;
+import tools.dynamia.io.FileInfo;
+import tools.dynamia.ui.UIMessages;
 
 /**
  *
@@ -37,28 +36,20 @@ public class DeleteFileAction extends FileManagerAction {
 
 		if (evt.getData() instanceof FileInfo) {
 			final FileInfo fileInfo = (FileInfo) evt.getData();
-			UIMessages.showQuestion("Are you sure to delete " + fileInfo.getName() + "?", new Callback() {
-
-				@Override
-				public void doSomething() {
-					fileInfo.getFile().delete();
-					mgr.updateUI();
-					UIMessages.showMessage(fileInfo.getName() + " deleted successfull");
-				}
+			UIMessages.showQuestion("Are you sure to delete " + fileInfo.getName() + "?", () -> {
+				fileInfo.getFile().delete();
+				mgr.updateUI();
+				UIMessages.showMessage(fileInfo.getName() + " deleted successfull");
 			});
 		} else if (evt.getData() instanceof List) {
 			final List<FileInfo> files = (List<FileInfo>) evt.getData();
 			if (!files.isEmpty()) {
-				UIMessages.showQuestion("Are you sure to delete " + files.size() + " files ?", new Callback() {
-
-					@Override
-					public void doSomething() {
-						for (FileInfo file : files) {
-							file.getFile().delete();
-						}
-						mgr.updateUI();
-						UIMessages.showMessage(files.size() + " files deleted successfull");
+				UIMessages.showQuestion("Are you sure to delete " + files.size() + " files ?", () -> {
+					for (FileInfo file : files) {
+						file.getFile().delete();
 					}
+					mgr.updateUI();
+					UIMessages.showMessage(files.size() + " files deleted successfull");
 				});
 			}
 		}

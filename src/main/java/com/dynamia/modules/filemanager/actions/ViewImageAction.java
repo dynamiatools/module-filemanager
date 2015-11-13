@@ -1,23 +1,21 @@
 package com.dynamia.modules.filemanager.actions;
 
-import java.io.FileNotFoundException;
+
 import java.io.IOException;
 import java.util.List;
 
 import org.zkoss.image.AImage;
-import org.zkoss.image.Images;
-import org.zkoss.zul.Filedownload;
 import org.zkoss.zul.Image;
 import org.zkoss.zul.Window;
 
 import com.dynamia.modules.filemanager.FileManagerAction;
-import com.dynamia.tools.io.FileInfo;
-import com.dynamia.tools.io.IOUtils;
-import com.dynamia.tools.web.actions.ActionEvent;
-import com.dynamia.tools.web.icons.InstallIcons;
-import com.dynamia.tools.web.ui.MessageType;
-import com.dynamia.tools.web.ui.UIMessages;
-import com.dynamia.tools.web.util.ZKUtil;
+
+import tools.dynamia.actions.ActionEvent;
+import tools.dynamia.io.FileInfo;
+import tools.dynamia.ui.MessageType;
+import tools.dynamia.ui.UIMessages;
+import tools.dynamia.ui.icons.InstallIcons;
+import tools.dynamia.zk.util.ZKUtil;
 
 @InstallIcons
 public class ViewImageAction extends FileManagerAction {

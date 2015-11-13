@@ -5,13 +5,14 @@
  */
 package com.dynamia.modules.filemanager.ui;
 
-import com.dynamia.tools.web.icons.IconSize;
-import com.dynamia.tools.web.icons.IconsTheme;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Treeitem;
 import org.zkoss.zul.TreeitemRenderer;
+
+import tools.dynamia.ui.icons.IconSize;
+import tools.dynamia.ui.icons.IconsTheme;
 
 /**
  *

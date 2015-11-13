@@ -11,7 +11,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import org.zkoss.zk.ui.event.Event;
@@ -19,13 +18,12 @@ import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Tree;
 import org.zkoss.zul.Treeitem;
-import org.zkoss.zul.event.TreeDataEvent;
 
-import com.dynamia.tools.io.FileInfo;
-import com.dynamia.tools.web.ui.ChildrenLoader;
-import com.dynamia.tools.web.ui.EntityTreeModel;
-import com.dynamia.tools.web.ui.EntityTreeNode;
-import com.dynamia.tools.web.ui.LazyEntityTreeNode;
+import tools.dynamia.io.FileInfo;
+import tools.dynamia.zk.crud.ui.ChildrenLoader;
+import tools.dynamia.zk.crud.ui.EntityTreeModel;
+import tools.dynamia.zk.crud.ui.EntityTreeNode;
+import tools.dynamia.zk.crud.ui.LazyEntityTreeNode;
 
 /**
  *
@@ -93,18 +91,14 @@ public class DirectoryTree extends Tree implements ChildrenLoader<FileInfo>, Eve
 	}
 
 	private Collection<EntityTreeNode<FileInfo>> getSubdirectories(FileInfo file) {
-		File[] subs = file.getFile().listFiles(new FileFilter() {
-
-			@Override
-			public boolean accept(File pathname) {
-				if (pathname.isDirectory()) {
-					if (!isShowHiddenFolders()) {
-						return !pathname.isHidden() && !pathname.getName().startsWith(".");
-					}
-					return true;
+		File[] subs = file.getFile().listFiles((FileFilter) pathname -> {
+			if (pathname.isDirectory()) {
+				if (!isShowHiddenFolders()) {
+					return !pathname.isHidden() && !pathname.getName().startsWith(".");
 				}
-				return false;
+				return true;
 			}
+			return false;
 		});
 
 		List<EntityTreeNode<FileInfo>> subdirectories = new ArrayList<EntityTreeNode<FileInfo>>();
@@ -114,13 +108,7 @@ public class DirectoryTree extends Tree implements ChildrenLoader<FileInfo>, Eve
 			}
 		}
 
-		Collections.sort(subdirectories, new Comparator<EntityTreeNode<FileInfo>>() {
-
-			@Override
-			public int compare(EntityTreeNode<FileInfo> o1, EntityTreeNode<FileInfo> o2) {
-				return o1.getData().getName().compareTo(o2.getData().getName());
-			}
-		});
+		Collections.sort(subdirectories, (o1, o2) -> o1.getData().getName().compareTo(o2.getData().getName()));
 
 		return subdirectories;
 	}

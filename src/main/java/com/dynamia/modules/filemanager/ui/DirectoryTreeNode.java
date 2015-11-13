@@ -5,9 +5,9 @@
  */
 package com.dynamia.modules.filemanager.ui;
 
-import com.dynamia.tools.io.FileInfo;
-import com.dynamia.tools.web.ui.ChildrenLoader;
-import com.dynamia.tools.web.ui.LazyEntityTreeNode;
+import tools.dynamia.io.FileInfo;
+import tools.dynamia.zk.crud.ui.ChildrenLoader;
+import tools.dynamia.zk.crud.ui.LazyEntityTreeNode;
 
 /**
  *

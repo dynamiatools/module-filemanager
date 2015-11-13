@@ -1,12 +1,7 @@
 package com.dynamia.modules.filemanager.actions;
 
-import static com.dynamia.tools.viewers.ViewDescriptorBuilder.field;
-import static com.dynamia.tools.viewers.ViewDescriptorBuilder.viewDescriptor;
-
 import java.io.File;
 
-import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Window;
@@ -14,13 +9,15 @@ import org.zkoss.zul.Window;
 import com.dynamia.modules.filemanager.FileManager;
 import com.dynamia.modules.filemanager.FileManagerAction;
 import com.dynamia.modules.filemanager.Folder;
-import com.dynamia.tools.viewers.ViewDescriptor;
-import com.dynamia.tools.viewers.zk.ui.Viewer;
-import com.dynamia.tools.web.actions.ActionEvent;
-import com.dynamia.tools.web.actions.InstallAction;
-import com.dynamia.tools.web.ui.MessageType;
-import com.dynamia.tools.web.ui.UIMessages;
-import com.dynamia.tools.web.util.ZKUtil;
+
+import tools.dynamia.actions.ActionEvent;
+import tools.dynamia.actions.InstallAction;
+import tools.dynamia.ui.MessageType;
+import tools.dynamia.ui.UIMessages;
+import tools.dynamia.viewers.ViewDescriptor;
+import static tools.dynamia.viewers.ViewDescriptorBuilder.*;
+import tools.dynamia.zk.util.ZKUtil;
+import tools.dynamia.zk.viewers.ui.Viewer;
 
 @InstallAction
 public class NewDirectoryAction extends FileManagerAction {
@@ -29,7 +26,7 @@ public class NewDirectoryAction extends FileManagerAction {
 		setName("New Directory");
 		setImage("add-folder");
 		setPosition(1);
-		
+
 	}
 
 	@Override
@@ -58,29 +55,25 @@ public class NewDirectoryAction extends FileManagerAction {
 		Button btn = new Button("Create Directory");
 		btn.setStyle("float:right");
 		window.appendChild(btn);
-		btn.addEventListener(Events.ON_CLICK, new EventListener<Event>() {
+		btn.addEventListener(Events.ON_CLICK, event -> {
+			Folder form1 = (Folder) viewer.getValue();
+			File parent = fileManager.getRootDirectory();
+			if (!form1.isRoot() && fileManager.getCurrentDirectory() != null) {
+				parent = fileManager.getCurrentDirectory();
+			}
+			if (form1.getName() != null && !form1.getName().isEmpty()) {
 
-			@Override
-			public void onEvent(Event event) throws Exception {
-				Folder form = (Folder) viewer.getValue();
-				File parent = fileManager.getRootDirectory();
-				if (!form.isRoot() && fileManager.getCurrentDirectory() != null) {
-					parent = fileManager.getCurrentDirectory();
-				}
-				if (form.getName() != null && !form.getName().isEmpty()) {
-
-					File newdir = new File(parent, form.getName());
-					if (!newdir.exists()) {
-						newdir.mkdirs();
-						window.detach();
-						UIMessages.showMessage("Directory " + form.getName() + " created successfully");
-						fileManager.reloadSelected();
-					} else {
-						UIMessages.showMessage("Already exists  directory with name " + form.getName(), MessageType.ERROR);
-					}
+				File newdir = new File(parent, form1.getName());
+				if (!newdir.exists()) {
+					newdir.mkdirs();
+					window.detach();
+					UIMessages.showMessage("Directory " + form1.getName() + " created successfully");
+					fileManager.reloadSelected();
 				} else {
-					UIMessages.showMessage("Enter directory name", MessageType.ERROR);
+					UIMessages.showMessage("Already exists  directory with name " + form1.getName(), MessageType.ERROR);
 				}
+			} else {
+				UIMessages.showMessage("Enter directory name", MessageType.ERROR);
 			}
 		});
 

@@ -1,11 +1,13 @@
 package com.dynamia.modules.filemanager.actions;
 
+
+
 import com.dynamia.modules.filemanager.FileManager;
 import com.dynamia.modules.filemanager.FileManagerAction;
-import com.dynamia.tools.web.actions.ActionEvent;
-import com.dynamia.tools.web.actions.InstallAction;
-import com.dynamia.tools.web.ui.UIMessages;
-import com.dynamia.tools.web.util.Callback;
+
+import tools.dynamia.actions.ActionEvent;
+import tools.dynamia.actions.InstallAction;
+import tools.dynamia.ui.UIMessages;
 
 @InstallAction
 public class DeleteDirectoryAction extends FileManagerAction {
@@ -22,15 +24,11 @@ public class DeleteDirectoryAction extends FileManagerAction {
 
 		if (fileManager.getCurrentDirectory() != null) {
 			UIMessages.showQuestion("Are you sure you want delete " + fileManager.getCurrentDirectory().getName() + " folder?",
-					new Callback() {
+					() -> {
+						fileManager.getCurrentDirectory().delete();
+						fileManager.reload();							
+						UIMessages.showMessage("Directory deleted successfull");
 
-						@Override
-						public void doSomething() {
-							fileManager.getCurrentDirectory().delete();
-							fileManager.reload();							
-							UIMessages.showMessage("Directory deleted successfull");
-
-						}
 					});
 		}
 

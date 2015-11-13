@@ -10,13 +10,10 @@ import java.io.FileFilter;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
 import org.zkoss.zk.ui.Component;
-import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Center;
@@ -27,14 +24,15 @@ import org.zkoss.zul.North;
 import org.zkoss.zul.West;
 
 import com.dynamia.modules.filemanager.ui.DirectoryTree;
-import com.dynamia.tools.integration.Containers;
-import com.dynamia.tools.io.FileInfo;
-import com.dynamia.tools.viewers.util.Viewers;
-import com.dynamia.tools.viewers.zk.table.TableView;
-import com.dynamia.tools.web.actions.Action;
-import com.dynamia.tools.web.actions.ActionEvent;
-import com.dynamia.tools.web.actions.ActionEventBuilder;
-import com.dynamia.tools.web.ui.ActionToolbar;
+
+import tools.dynamia.actions.Action;
+import tools.dynamia.actions.ActionEvent;
+import tools.dynamia.actions.ActionEventBuilder;
+import tools.dynamia.integration.Containers;
+import tools.dynamia.io.FileInfo;
+import tools.dynamia.viewers.util.Viewers;
+import tools.dynamia.zk.actions.ActionToolbar;
+import tools.dynamia.zk.viewers.table.TableView;
 
 /**
  *
@@ -92,14 +90,7 @@ public class FileManager extends Div implements ActionEventBuilder {
 		layout.getNorth().appendChild(toolbar);
 
 		directoryTree = new DirectoryTree(rootDirectory);
-		directoryTree.addEventListener(Events.ON_SELECT, new EventListener<Event>() {
-
-			@Override
-			public void onEvent(Event t) throws Exception {
-				loadFiles(directoryTree.getSelected());
-			}
-
-		});
+		directoryTree.addEventListener(Events.ON_SELECT, t -> loadFiles(directoryTree.getSelected()));
 		layout.getWest().appendChild(directoryTree);
 		layout.getWest().setWidth("25%");
 		layout.getWest().setTitle("Directories");
@@ -151,13 +142,7 @@ public class FileManager extends Div implements ActionEventBuilder {
 	private void loadFiles(File selectedDirectory) {
 		if (selectedDirectory != null) {
 			this.currentDirectory = selectedDirectory;
-			File files[] = selectedDirectory.listFiles(new FileFilter() {
-
-				@Override
-				public boolean accept(File pathname) {
-					return pathname.isFile();
-				}
-			});
+			File files[] = selectedDirectory.listFiles((FileFilter) pathname -> pathname.isFile());
 
 			List<FileInfo> fileInfos = new ArrayList<>();
 			if (files != null) {
@@ -174,14 +159,10 @@ public class FileManager extends Div implements ActionEventBuilder {
 		for (FileManagerAction action : Containers.get().findObjects(FileManagerAction.class)) {
 			actions.add(action);
 		}
-		Collections.sort(actions, new Comparator<Action>() {
-
-			@Override
-			public int compare(Action o1, Action o2) {
-				Double pos1 = o1.getPosition();
-				Double pos2 = o2.getPosition();
-				return pos1.compareTo(pos2);
-			}
+		Collections.sort(actions, (o1, o2) -> {
+			Double pos1 = o1.getPosition();
+			Double pos2 = o2.getPosition();
+			return pos1.compareTo(pos2);
 		});
 
 		for (Action action : actions) {

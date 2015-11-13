@@ -5,10 +5,10 @@
  */
 package com.dynamia.modules.filemanager;
 
-import com.dynamia.tools.viewers.Indexable;
-import com.dynamia.tools.web.actions.AbstractAction;
-import com.dynamia.tools.web.actions.ActionRenderer;
-import com.dynamia.tools.web.crud.actions.renderers.ToolbarbuttonActionRenderer;
+import tools.dynamia.actions.AbstractAction;
+import tools.dynamia.actions.ActionRenderer;
+import tools.dynamia.viewers.Indexable;
+import tools.dynamia.zk.actions.ToolbarbuttonActionRenderer;
 
 /**
  *
