@@ -22,7 +22,7 @@ public class ViewImageAction extends FileManagerAction {
 
 	public ViewImageAction() {
 		setName("View Image");
-		setImage("image");
+		setImage("photo");
 		setPosition(3.2);
 	}
 

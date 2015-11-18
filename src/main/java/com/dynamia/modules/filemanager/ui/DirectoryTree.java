@@ -19,7 +19,9 @@ import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Tree;
 import org.zkoss.zul.Treeitem;
 
+import tools.dynamia.integration.Containers;
 import tools.dynamia.io.FileInfo;
+import tools.dynamia.io.VirtualFileProvider;
 import tools.dynamia.zk.crud.ui.ChildrenLoader;
 import tools.dynamia.zk.crud.ui.EntityTreeModel;
 import tools.dynamia.zk.crud.ui.EntityTreeNode;
@@ -86,6 +88,13 @@ public class DirectoryTree extends Tree implements ChildrenLoader<FileInfo>, Eve
 		for (EntityTreeNode<FileInfo> entityTreeNode : getSubdirectories(file)) {
 			rootNode.addChild(entityTreeNode);
 		}
+
+		for (VirtualFileProvider virtualFileProvider : Containers.get().findObjects(VirtualFileProvider.class)) {
+
+			virtualFileProvider.getVirtualFiles()
+					.forEach(vf -> rootNode.addChild(new DirectoryTreeNode(new FileInfo(vf), this)));
+		}
+
 		setModel(treeModel);
 
 	}
@@ -116,7 +125,8 @@ public class DirectoryTree extends Tree implements ChildrenLoader<FileInfo>, Eve
 	@Override
 	public void loadChildren(LazyEntityTreeNode<FileInfo> node) {
 		node.getChildren().clear();
-		//treeModel.fireEvent(TreeDataEvent.INTERVAL_REMOVED, treeModel.getPath(node), node.getChildCount(), 0);
+		// treeModel.fireEvent(TreeDataEvent.INTERVAL_REMOVED,
+		// treeModel.getPath(node), node.getChildCount(), 0);
 		setModel(treeModel);
 		for (EntityTreeNode<FileInfo> treeNode : getSubdirectories(node.getData())) {
 			node.addChild(treeNode);

@@ -59,7 +59,11 @@ public class NewDirectoryAction extends FileManagerAction {
 			Folder form1 = (Folder) viewer.getValue();
 			File parent = fileManager.getRootDirectory();
 			if (!form1.isRoot() && fileManager.getCurrentDirectory() != null) {
-				parent = fileManager.getCurrentDirectory();
+				if (fileManager.getCurrentDirectory().isReadOnly()) {
+					UIMessages.showMessage("Cannot create subdirectory because selected directory is read only", MessageType.WARNING);
+					return;
+				}
+				parent = fileManager.getCurrentDirectory().getFile();
 			}
 			if (form1.getName() != null && !form1.getName().isEmpty()) {
 

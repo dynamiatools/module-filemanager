@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.zkoss.zk.ui.Component;
+import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Center;
@@ -30,15 +31,19 @@ import tools.dynamia.actions.ActionEvent;
 import tools.dynamia.actions.ActionEventBuilder;
 import tools.dynamia.integration.Containers;
 import tools.dynamia.io.FileInfo;
+import tools.dynamia.io.VirtualFileProvider;
+import tools.dynamia.viewers.View;
+import tools.dynamia.viewers.ViewDescriptor;
 import tools.dynamia.viewers.util.Viewers;
 import tools.dynamia.zk.actions.ActionToolbar;
+import tools.dynamia.zk.viewers.form.FormView;
 import tools.dynamia.zk.viewers.table.TableView;
 
 /**
  *
  * @author mario_2
  */
-public class FileManager extends Div implements ActionEventBuilder {
+public class FileManager extends Div implements ActionEventBuilder, View<FileInfo> {
 
 	/**
 	 * 
@@ -49,7 +54,10 @@ public class FileManager extends Div implements ActionEventBuilder {
 	private File rootDirectory;
 	private DirectoryTree directoryTree;
 	private TableView<FileInfo> tableFiles;
-	private File currentDirectory;
+	private FileInfo currentDirectory;
+	private View parentView;
+	private ViewDescriptor viewDescriptor;
+	private FileInfo value;
 
 	public FileManager() {
 
@@ -57,11 +65,60 @@ public class FileManager extends Div implements ActionEventBuilder {
 
 	public FileManager(File directory) {
 		this.rootDirectory = directory;
-		this.currentDirectory = directory;
 	}
 
 	public FileManager(Path path) {
 		this(path.toFile());
+	}
+
+	@Override
+	public FileInfo getValue() {
+
+		try {
+			value = getSelecteds().get(0);
+		} catch (Exception e) {
+			value = null;
+		}
+		return value;
+	}
+
+	@Override
+	public void setValue(FileInfo value) {
+		if (this.value != value) {
+			this.value = value;
+			Events.postEvent(new Event(FormView.ON_VALUE_CHANGED, this, this.value));
+
+			if (value != null) {
+				currentDirectory = new FileInfo(value.getFile().getParentFile());
+
+				if (rootDirectory == null) {
+					rootDirectory = currentDirectory.getFile();
+					initLayout();
+				}
+			}
+		}
+
+	}
+
+	@Override
+	public void setViewDescriptor(ViewDescriptor viewDescriptor) {
+		this.viewDescriptor = viewDescriptor;
+
+	}
+
+	@Override
+	public ViewDescriptor getViewDescriptor() {
+		return viewDescriptor;
+	}
+
+	@Override
+	public View getParentView() {
+		return parentView;
+	}
+
+	@Override
+	public void setParentView(View view) {
+		this.parentView = view;
 	}
 
 	private void initLayout() {
@@ -90,7 +147,13 @@ public class FileManager extends Div implements ActionEventBuilder {
 		layout.getNorth().appendChild(toolbar);
 
 		directoryTree = new DirectoryTree(rootDirectory);
-		directoryTree.addEventListener(Events.ON_SELECT, t -> loadFiles(directoryTree.getSelected()));
+		directoryTree.addEventListener(Events.ON_SELECT, t -> {
+			File selectedDir = directoryTree.getSelected();
+			if (selectedDir != null) {
+				this.currentDirectory = new FileInfo(selectedDir);
+				loadFiles(selectedDir);
+			}
+		});
 		layout.getWest().appendChild(directoryTree);
 		layout.getWest().setWidth("25%");
 		layout.getWest().setTitle("Directories");
@@ -119,7 +182,7 @@ public class FileManager extends Div implements ActionEventBuilder {
 		if (fileInfo != null) {
 			String path = fileInfo.getFile().getPath();
 			path = path.substring(path.indexOf(rootDirectory.getName()) + rootDirectory.getName().length() + 1);
-			path = path.replace(" ", "%20");
+
 			return path;
 		} else {
 			return "";
@@ -141,7 +204,6 @@ public class FileManager extends Div implements ActionEventBuilder {
 
 	private void loadFiles(File selectedDirectory) {
 		if (selectedDirectory != null) {
-			this.currentDirectory = selectedDirectory;
 			File files[] = selectedDirectory.listFiles((FileFilter) pathname -> pathname.isFile());
 
 			List<FileInfo> fileInfos = new ArrayList<>();
@@ -178,7 +240,6 @@ public class FileManager extends Div implements ActionEventBuilder {
 
 	public void setRootDirectory(File rootDirectory) {
 		this.rootDirectory = rootDirectory;
-		this.currentDirectory = rootDirectory;
 		initLayout();
 	}
 
@@ -195,12 +256,17 @@ public class FileManager extends Div implements ActionEventBuilder {
 		return rootDirectory;
 	}
 
-	public File getCurrentDirectory() {
+	public FileInfo getCurrentDirectory() {
 		return currentDirectory;
 	}
 
 	public void updateUI() {
-		loadFiles(getCurrentDirectory());
+		if (currentDirectory != null) {
+			loadFiles(getCurrentDirectory().getFile());
+		} else {
+			loadFiles(rootDirectory);
+
+		}
 	}
 
 	public TableView<FileInfo> getTableFiles() {

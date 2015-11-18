@@ -5,7 +5,6 @@
  */
 package com.dynamia.modules.filemanager.actions;
 
-
 import java.util.List;
 
 import com.dynamia.modules.filemanager.FileManager;
@@ -37,7 +36,7 @@ public class DeleteFileAction extends FileManagerAction {
 		if (evt.getData() instanceof FileInfo) {
 			final FileInfo fileInfo = (FileInfo) evt.getData();
 			UIMessages.showQuestion("Are you sure to delete " + fileInfo.getName() + "?", () -> {
-				fileInfo.getFile().delete();
+				fileInfo.delete();
 				mgr.updateUI();
 				UIMessages.showMessage(fileInfo.getName() + " deleted successfull");
 			});
@@ -46,7 +45,7 @@ public class DeleteFileAction extends FileManagerAction {
 			if (!files.isEmpty()) {
 				UIMessages.showQuestion("Are you sure to delete " + files.size() + " files ?", () -> {
 					for (FileInfo file : files) {
-						file.getFile().delete();
+						file.delete();
 					}
 					mgr.updateUI();
 					UIMessages.showMessage(files.size() + " files deleted successfull");

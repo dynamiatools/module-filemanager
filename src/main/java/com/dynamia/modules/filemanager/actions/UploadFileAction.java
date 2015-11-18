@@ -17,6 +17,7 @@ import com.dynamia.modules.filemanager.FileManagerAction;
 
 import tools.dynamia.actions.ActionEvent;
 import tools.dynamia.actions.InstallAction;
+import tools.dynamia.ui.MessageType;
 import tools.dynamia.ui.UIMessages;
 
 /**
@@ -35,15 +36,27 @@ public class UploadFileAction extends FileManagerAction {
 	@Override
 	public void actionPerformed(ActionEvent evt) {
 		final FileManager mgr = (FileManager) evt.getSource();
-		Fileupload.get(5, t -> {
-			Media medias[] = t.getMedias();
-			for (Media media : medias) {
-				Path target = mgr.getCurrentDirectory().toPath().resolve(media.getName());
-				Files.copy(media.getStreamData(), target, StandardCopyOption.REPLACE_EXISTING);
+
+		if (mgr.getCurrentDirectory() != null) {
+
+			if (mgr.getCurrentDirectory().isReadOnly()) {
+				UIMessages.showMessage("Selected directory is read only, cannot upload file", MessageType.WARNING);
+				return;
 			}
-			mgr.updateUI();
-			UIMessages.showMessage("File(s) uploaded successfull");
-		});
+
+			Fileupload.get(5, t -> {
+				Media medias[] = t.getMedias();
+				for (Media media : medias) {
+					Path target = mgr.getCurrentDirectory().getFile().toPath().resolve(media.getName());
+					Files.copy(media.getStreamData(), target, StandardCopyOption.REPLACE_EXISTING);
+				}
+				mgr.updateUI();
+				UIMessages.showMessage("File(s) uploaded successfull");
+			});
+
+		} else {
+			UIMessages.showMessage("Select destination directory", MessageType.WARNING);
+		}
 	}
 
 }
