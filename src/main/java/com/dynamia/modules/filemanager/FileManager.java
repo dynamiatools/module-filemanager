@@ -75,7 +75,7 @@ public class FileManager extends Div implements ActionEventBuilder, View<FileInf
 	public FileInfo getValue() {
 
 		try {
-			value = getSelecteds().get(0);
+			value = getSelectedFiles().get(0);
 		} catch (Exception e) {
 			value = null;
 		}
@@ -174,7 +174,7 @@ public class FileManager extends Div implements ActionEventBuilder, View<FileInf
 
 	@Override
 	public ActionEvent buildActionEvent(Object source, Map<String, Object> params) {
-		return new ActionEvent(tableFiles.isMultiple() ? getSelecteds() : tableFiles.getSelected(), this);
+		return new ActionEvent(tableFiles.isMultiple() ? getSelectedFiles() : tableFiles.getSelected(), this);
 	}
 
 	public String getSelectedFilePath() {
@@ -190,7 +190,7 @@ public class FileManager extends Div implements ActionEventBuilder, View<FileInf
 
 	}
 
-	private List<FileInfo> getSelecteds() {
+	public List<FileInfo> getSelectedFiles() {
 		List<FileInfo> selecteds = new ArrayList<>();
 
 		if (tableFiles.getSelectedCount() > 0) {

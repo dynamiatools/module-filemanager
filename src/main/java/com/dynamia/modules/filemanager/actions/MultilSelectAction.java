@@ -12,7 +12,7 @@ public class MultilSelectAction extends FileManagerAction {
 
 	public MultilSelectAction() {
 		setName("Multi Select Files");
-		setImage("check");
+		setImage("multicheck");
 	}
 
 	@Override
