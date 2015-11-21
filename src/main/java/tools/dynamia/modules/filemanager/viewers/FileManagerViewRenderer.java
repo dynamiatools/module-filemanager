@@ -1,8 +1,7 @@
-package com.dynamia.modules.filemanager.viewers;
-
-import com.dynamia.modules.filemanager.FileManager;
+package tools.dynamia.modules.filemanager.viewers;
 
 import tools.dynamia.io.FileInfo;
+import tools.dynamia.modules.filemanager.FileManager;
 import tools.dynamia.viewers.View;
 import tools.dynamia.viewers.ViewDescriptor;
 import tools.dynamia.viewers.ViewRenderer;

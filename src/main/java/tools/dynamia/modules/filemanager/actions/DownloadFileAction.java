@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.dynamia.modules.filemanager.actions;
+package tools.dynamia.modules.filemanager.actions;
 
 
 import java.io.FileNotFoundException;
@@ -11,11 +11,10 @@ import java.util.List;
 
 import org.zkoss.zul.Filedownload;
 
-import com.dynamia.modules.filemanager.FileManagerAction;
-
 import tools.dynamia.actions.ActionEvent;
 import tools.dynamia.actions.InstallAction;
 import tools.dynamia.io.FileInfo;
+import tools.dynamia.modules.filemanager.FileManagerAction;
 import tools.dynamia.ui.MessageType;
 import tools.dynamia.ui.UIMessages;
 

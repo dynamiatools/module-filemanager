@@ -1,4 +1,4 @@
-package com.dynamia.modules.filemanager;
+package tools.dynamia.modules.filemanager;
 
 public class Folder {
 	private String name="";

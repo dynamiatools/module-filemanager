@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.dynamia.modules.filemanager;
+package tools.dynamia.modules.filemanager;
 
 import tools.dynamia.actions.AbstractAction;
 import tools.dynamia.actions.ActionRenderer;

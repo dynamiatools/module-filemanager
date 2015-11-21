@@ -1,4 +1,4 @@
-package com.dynamia.modules.filemanager.viewers;
+package tools.dynamia.modules.filemanager.viewers;
 
 import tools.dynamia.integration.sterotypes.Component;
 import tools.dynamia.viewers.ViewRenderer;

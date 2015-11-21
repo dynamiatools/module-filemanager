@@ -1,12 +1,11 @@
-package com.dynamia.modules.filemanager.actions;
-
-import com.dynamia.modules.filemanager.FileManager;
-import com.dynamia.modules.filemanager.FileManagerAction;
+package tools.dynamia.modules.filemanager.actions;
 
 import tools.dynamia.actions.ActionEvent;
 import tools.dynamia.actions.InstallAction;
 import tools.dynamia.io.FileInfo;
 import tools.dynamia.io.IOUtils;
+import tools.dynamia.modules.filemanager.FileManager;
+import tools.dynamia.modules.filemanager.FileManagerAction;
 import tools.dynamia.ui.MessageType;
 import tools.dynamia.ui.UIMessages;
 

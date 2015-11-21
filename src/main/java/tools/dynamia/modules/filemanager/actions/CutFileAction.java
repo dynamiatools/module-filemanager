@@ -1,12 +1,11 @@
-package com.dynamia.modules.filemanager.actions;
+package tools.dynamia.modules.filemanager.actions;
 
 import java.util.List;
-
-import com.dynamia.modules.filemanager.FileManager;
 
 import tools.dynamia.actions.ActionEvent;
 import tools.dynamia.actions.InstallAction;
 import tools.dynamia.io.FileInfo;
+import tools.dynamia.modules.filemanager.FileManager;
 
 @InstallAction
 public class CutFileAction extends CopyFileAction {

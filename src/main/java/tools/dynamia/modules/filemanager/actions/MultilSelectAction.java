@@ -1,11 +1,9 @@
-package com.dynamia.modules.filemanager.actions;
+package tools.dynamia.modules.filemanager.actions;
 
 import tools.dynamia.actions.ActionEvent;
-
-import com.dynamia.modules.filemanager.FileManager;
-import com.dynamia.modules.filemanager.FileManagerAction;
-
 import tools.dynamia.actions.InstallAction;
+import tools.dynamia.modules.filemanager.FileManager;
+import tools.dynamia.modules.filemanager.FileManagerAction;
 
 @InstallAction
 public class MultilSelectAction extends FileManagerAction {

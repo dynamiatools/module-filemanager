@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.dynamia.modules.filemanager;
+package tools.dynamia.modules.filemanager;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -24,14 +24,13 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.North;
 import org.zkoss.zul.West;
 
-import com.dynamia.modules.filemanager.ui.DirectoryTree;
-
 import tools.dynamia.actions.Action;
 import tools.dynamia.actions.ActionEvent;
 import tools.dynamia.actions.ActionEventBuilder;
 import tools.dynamia.integration.Containers;
 import tools.dynamia.io.FileInfo;
 import tools.dynamia.io.VirtualFileProvider;
+import tools.dynamia.modules.filemanager.ui.DirectoryTree;
 import tools.dynamia.viewers.View;
 import tools.dynamia.viewers.ViewDescriptor;
 import tools.dynamia.viewers.util.Viewers;

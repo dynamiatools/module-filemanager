@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.dynamia.modules.filemanager.ui;
+package tools.dynamia.modules.filemanager.ui;
 
 import tools.dynamia.io.FileInfo;
 import tools.dynamia.zk.crud.ui.ChildrenLoader;

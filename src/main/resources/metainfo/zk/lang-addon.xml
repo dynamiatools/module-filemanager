@@ -9,7 +9,7 @@
 
 	<component>
 		<component-name>filemanager</component-name>
-		<component-class>com.dynamia.modules.filemanager.FileManager
+		<component-class>tools.dynamia.modules.filemanager.FileManager
 		</component-class>
 		<widget-class>zul.wgt.Div</widget-class>
 

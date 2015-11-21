@@ -1,4 +1,4 @@
-package com.dynamia.modules.filemanager.actions;
+package tools.dynamia.modules.filemanager.actions;
 
 
 import java.io.IOException;
@@ -8,10 +8,9 @@ import org.zkoss.image.AImage;
 import org.zkoss.zul.Image;
 import org.zkoss.zul.Window;
 
-import com.dynamia.modules.filemanager.FileManagerAction;
-
 import tools.dynamia.actions.ActionEvent;
 import tools.dynamia.io.FileInfo;
+import tools.dynamia.modules.filemanager.FileManagerAction;
 import tools.dynamia.ui.MessageType;
 import tools.dynamia.ui.UIMessages;
 import tools.dynamia.ui.icons.InstallIcons;

@@ -1,4 +1,4 @@
-package com.dynamia.modules.filemanager.actions;
+package tools.dynamia.modules.filemanager.actions;
 
 import java.io.File;
 
@@ -6,12 +6,11 @@ import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Window;
 
-import com.dynamia.modules.filemanager.FileManager;
-import com.dynamia.modules.filemanager.FileManagerAction;
-import com.dynamia.modules.filemanager.Folder;
-
 import tools.dynamia.actions.ActionEvent;
 import tools.dynamia.actions.InstallAction;
+import tools.dynamia.modules.filemanager.FileManager;
+import tools.dynamia.modules.filemanager.FileManagerAction;
+import tools.dynamia.modules.filemanager.Folder;
 import tools.dynamia.ui.MessageType;
 import tools.dynamia.ui.UIMessages;
 import tools.dynamia.viewers.ViewDescriptor;
@@ -72,7 +71,12 @@ public class NewDirectoryAction extends FileManagerAction {
 					newdir.mkdirs();
 					window.detach();
 					UIMessages.showMessage("Directory " + form1.getName() + " created successfully");
-					fileManager.reloadSelected();
+					if (form1.isRoot()) {
+						fileManager.reload();
+					} else {
+						fileManager.reloadSelected();
+					}
+
 				} else {
 					UIMessages.showMessage("Already exists  directory with name " + form1.getName(), MessageType.ERROR);
 				}
