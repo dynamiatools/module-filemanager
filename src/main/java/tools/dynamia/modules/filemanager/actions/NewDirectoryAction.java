@@ -42,7 +42,7 @@ public class NewDirectoryAction extends FileManagerAction {
 				.fields(
 						field("parent", "Parent", "label"))
 				.layout("columns", "1")
-				.build();
+				.build(); 
 
 		final Viewer viewer = new Viewer(descriptor, form);
 		viewer.setWidth("600px");
