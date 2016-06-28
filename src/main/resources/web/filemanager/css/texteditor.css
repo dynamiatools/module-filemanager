@@ -1,0 +1,9 @@
+.text-editor .text-editor-content{
+    white-space: nowrap;
+    font-family: monospace;
+    overflow: scroll;
+    padding: 10px;
+    background: #f9fbfa;
+    border-radius: 5px;
+}
+

@@ -33,130 +33,131 @@ import tools.dynamia.zk.crud.ui.LazyEntityTreeNode;
  */
 public class DirectoryTree extends Tree implements ChildrenLoader<FileInfo>, EventListener<Event> {
 
-	private File selected;
-	private EntityTreeModel<FileInfo> treeModel;
+    private File selected;
+    private EntityTreeModel<FileInfo> treeModel;
 
-	private EntityTreeNode<FileInfo> rootNode;
-	private boolean showHiddenFolders;
-	private final File rootDirectory;
+    private EntityTreeNode<FileInfo> rootNode;
+    private boolean showHiddenFolders;
+    private final File rootDirectory;
 
-	public DirectoryTree(File rootDirectory) {
-		this.rootDirectory = rootDirectory;
+    public DirectoryTree(File rootDirectory) {
+        this.rootDirectory = rootDirectory;
 
-		init();
-	}
+        init();
+    }
 
-	public DirectoryTree(Path rootPath) {
-		this(rootPath.toFile());
-	}
+    public DirectoryTree(Path rootPath) {
+        this(rootPath.toFile());
+    }
 
-	public void reload() {
-		initModel();
-	}
+    public void reload() {
+        initModel();
+    }
 
-	public void reloadSelectedDirectory() {
-		EntityTreeNode<FileInfo> selectedNode = rootNode;
-		if (getSelectedItem() != null) {
-			selectedNode = getSelectedItem().getValue();
-		}
+    public void reloadSelectedDirectory() {
+        EntityTreeNode<FileInfo> selectedNode = rootNode;
+        if (getSelectedItem() != null) {
+            selectedNode = getSelectedItem().getValue();
+        }
 
-		if (selectedNode == rootNode) {
-			initModel();
-		} else if (selectedNode instanceof LazyEntityTreeNode) {
-			loadChildren((LazyEntityTreeNode<FileInfo>) selectedNode);
-		}
+        if (selectedNode == rootNode) {
+            initModel();
+        } else if (selectedNode instanceof LazyEntityTreeNode) {
+            loadChildren((LazyEntityTreeNode<FileInfo>) selectedNode);
+        }
 
-	}
+    }
 
-	private void init() {
-		setHflex("1");
-		setVflex("1");
-		addEventListener(Events.ON_CLICK, this);
-		setItemRenderer(new DirectoryTreeItemRenderer());
+    private void init() {
+        setHflex("1");
+        setVflex("1");
+        addEventListener(Events.ON_CLICK, this);
+        setItemRenderer(new DirectoryTreeItemRenderer());
 
-		setVflex("1");
-		setHflex("1");
+        setVflex("1");
+        setHflex("1");
 
-		initModel();
-	}
+        initModel();
+    }
 
-	private void initModel() {
-		FileInfo file = new FileInfo(rootDirectory);
+    private void initModel() {
+        FileInfo file = new FileInfo(rootDirectory);
 
-		rootNode = new EntityTreeNode<FileInfo>(file);
-		treeModel = new EntityTreeModel<FileInfo>(rootNode);
-		for (EntityTreeNode<FileInfo> entityTreeNode : getSubdirectories(file)) {
-			rootNode.addChild(entityTreeNode);
-		}
+        rootNode = new EntityTreeNode<>(file);
+        EntityTreeNode<FileInfo> rootFileNode = new DirectoryTreeNode(file,this);
 
-		for (VirtualFileProvider virtualFileProvider : Containers.get().findObjects(VirtualFileProvider.class)) {
+        rootNode.addChild(rootFileNode);
 
-			virtualFileProvider.getVirtualFiles()
-					.forEach(vf -> rootNode.addChild(new DirectoryTreeNode(new FileInfo(vf), this)));
-		}
+        treeModel = new EntityTreeModel<>(rootNode);
+     
+        for (VirtualFileProvider virtualFileProvider : Containers.get().findObjects(VirtualFileProvider.class)) {
 
-		setModel(treeModel);
+            virtualFileProvider.getVirtualFiles()
+                    .forEach(vf -> rootNode.addChild(new DirectoryTreeNode(new FileInfo(vf), this)));
+        }
 
-	}
+        setModel(treeModel);
 
-	private Collection<EntityTreeNode<FileInfo>> getSubdirectories(FileInfo file) {
-		File[] subs = file.getFile().listFiles((FileFilter) pathname -> {
-			if (pathname.isDirectory()) {
-				if (!isShowHiddenFolders()) {
-					return !pathname.isHidden() && !pathname.getName().startsWith(".");
-				}
-				return true;
-			}
-			return false;
-		});
+    }
 
-		List<EntityTreeNode<FileInfo>> subdirectories = new ArrayList<EntityTreeNode<FileInfo>>();
-		if (subs != null) {
-			for (File sub : subs) {
-				subdirectories.add(new DirectoryTreeNode(new FileInfo(sub), this));
-			}
-		}
+    private Collection<EntityTreeNode<FileInfo>> getSubdirectories(FileInfo file) {
+        File[] subs = file.getFile().listFiles((FileFilter) pathname -> {
+            if (pathname.isDirectory()) {
+                if (!isShowHiddenFolders()) {
+                    return !pathname.isHidden() && !pathname.getName().startsWith(".");
+                }
+                return true;
+            }
+            return false;
+        });
 
-		Collections.sort(subdirectories, (o1, o2) -> o1.getData().getName().compareTo(o2.getData().getName()));
+        List<EntityTreeNode<FileInfo>> subdirectories = new ArrayList<EntityTreeNode<FileInfo>>();
+        if (subs != null) {
+            for (File sub : subs) {
+                subdirectories.add(new DirectoryTreeNode(new FileInfo(sub), this));
+            }
+        }
 
-		return subdirectories;
-	}
+        Collections.sort(subdirectories, (o1, o2) -> o1.getData().getName().toLowerCase().compareTo(o2.getData().getName().toLowerCase()));
 
-	@Override
-	public void loadChildren(LazyEntityTreeNode<FileInfo> node) {
-		node.getChildren().clear();
-		// treeModel.fireEvent(TreeDataEvent.INTERVAL_REMOVED,
-		// treeModel.getPath(node), node.getChildCount(), 0);
-		setModel(treeModel);
-		for (EntityTreeNode<FileInfo> treeNode : getSubdirectories(node.getData())) {
-			node.addChild(treeNode);
-		}
-	}
+        return subdirectories;
+    }
 
-	@Override
-	public void onEvent(Event event) throws Exception {
-		Treeitem item = getSelectedItem();
-		if (item != null) {
-			DirectoryTreeNode node = item.getValue();
-			setSelected(node.getData().getFile());
-		}
-	}
+    @Override
+    public void loadChildren(LazyEntityTreeNode<FileInfo> node) {
+        node.getChildren().clear();
+        // treeModel.fireEvent(TreeDataEvent.INTERVAL_REMOVED,
+        // treeModel.getPath(node), node.getChildCount(), 0);
+        setModel(treeModel);
+        for (EntityTreeNode<FileInfo> treeNode : getSubdirectories(node.getData())) {
+            node.addChild(treeNode);
+        }
+    }
 
-	public File getSelected() {
-		return selected;
-	}
+    @Override
+    public void onEvent(Event event) throws Exception {
+        Treeitem item = getSelectedItem();
+        if (item != null) {
+            DirectoryTreeNode node = item.getValue();
+            setSelected(node.getData().getFile());
+        }
+    }
 
-	public void setSelected(File value) {
-		this.selected = value;
-		Events.postEvent(new Event(Events.ON_SELECT, this, value));
-	}
+    public File getSelected() {
+        return selected;
+    }
 
-	public boolean isShowHiddenFolders() {
-		return showHiddenFolders;
-	}
+    public void setSelected(File value) {
+        this.selected = value;
+        Events.postEvent(new Event(Events.ON_SELECT, this, value));
+    }
 
-	public void setShowHiddenFolders(boolean showHiddenFolders) {
-		this.showHiddenFolders = showHiddenFolders;
-	}
+    public boolean isShowHiddenFolders() {
+        return showHiddenFolders;
+    }
+
+    public void setShowHiddenFolders(boolean showHiddenFolders) {
+        this.showHiddenFolders = showHiddenFolders;
+    }
 
 }

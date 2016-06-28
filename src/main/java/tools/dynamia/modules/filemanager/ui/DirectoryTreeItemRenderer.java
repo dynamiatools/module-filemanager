@@ -20,48 +20,48 @@ import tools.dynamia.ui.icons.IconsTheme;
  */
 public class DirectoryTreeItemRenderer implements TreeitemRenderer<DirectoryTreeNode>, EventListener<Event> {
 
-	@Override
-	public void render(Treeitem item, DirectoryTreeNode data, int index) throws Exception {
-		if (data != null) {
-			item.setValue(data);
-			item.setLabel(data.getData().getName());
-			item.addEventListener(Events.ON_OPEN, this);
-			item.addEventListener(Events.ON_CLOSE, this);
+    @Override
+    public void render(Treeitem item, DirectoryTreeNode data, int index) throws Exception {
+        if (data != null) {
+            item.setValue(data);
+            item.setLabel(data.getData().getName());
+            item.addEventListener(Events.ON_OPEN, this);
+            item.addEventListener(Events.ON_CLOSE, this);
 
-			setupIcon(item);
-		}
-	}
+            setupIcon(item);
+        }
+    }
 
-	@Override
-	public void onEvent(Event event) throws Exception {
-		Treeitem item = (Treeitem) event.getTarget();
-		DirectoryTreeNode node = item.getValue();
-		if (item.isOpen()) {
-			node.load();
-		} else {
-			node.getChildren().clear();
-		}
+    @Override
+    public void onEvent(Event event) throws Exception {
+        Treeitem item = (Treeitem) event.getTarget();
+        DirectoryTreeNode node = item.getValue();
+        if (item.isOpen()) {
+            node.load();
+        } else {
+            node.getChildren().clear();
+        }
 
-		setupIcon(item);
-	}
+        setupIcon(item);
+    }
 
-	private void setupIcon(Treeitem item) {
+    private void setupIcon(Treeitem item) {
 
-		DirectoryTreeNode node = item.getValue();
+        DirectoryTreeNode node = item.getValue();
 
-		if (item.isOpen()) {
-			item.setImage(IconsTheme.get().getIcon("folder-open").getRealPath(IconSize.SMALL));
-		} else {
-			item.setImage(IconsTheme.get().getIcon("folder").getRealPath(IconSize.SMALL));
-		}
+        if (item.isOpen()) {
+            item.setImage(IconsTheme.get().getIcon("folder-open").getRealPath(IconSize.SMALL));
+        } else {
+            item.setImage(IconsTheme.get().getIcon("folder").getRealPath(IconSize.SMALL));
+        }
 
-		if (!node.getData().getFile().canRead() || !node.getData().getFile().canWrite()) {
-			if (item.isOpen()) {
-				item.setImage(IconsTheme.get().getIcon("folder-red-open").getRealPath(IconSize.SMALL));
-			} else {
-				item.setImage(IconsTheme.get().getIcon("folder-red").getRealPath(IconSize.SMALL));
-			}
-		}
-	}
+        if (!node.getData().getFile().canRead() || !node.getData().getFile().canWrite()) {
+            if (item.isOpen()) {
+                item.setImage(IconsTheme.get().getIcon("folder-red-open").getRealPath(IconSize.SMALL));
+            } else {
+                item.setImage(IconsTheme.get().getIcon("folder-red").getRealPath(IconSize.SMALL));
+            }
+        }
+    }
 
 }

@@ -1,32 +1,24 @@
 package tools.dynamia.modules.filemanager;
 
 public class Folder {
-	private String name="";
-	private String parent="";
-	private boolean root;
 
-	public String getName() {
-		return name;
-	}
+    private String name = "";
+    private String parent = "";
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public String getParent() {
-		return parent;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public void setParent(String parent) {
-		this.parent = parent;
-	}
+    public String getParent() {
+        return parent;
+    }
 
-	public boolean isRoot() {
-		return root;
-	}
-
-	public void setRoot(boolean root) {
-		this.root = root;
-	}
+    public void setParent(String parent) {
+        this.parent = parent;
+    }
 
 }

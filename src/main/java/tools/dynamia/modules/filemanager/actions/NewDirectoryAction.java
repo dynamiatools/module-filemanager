@@ -21,72 +21,68 @@ import tools.dynamia.zk.viewers.ui.Viewer;
 @InstallAction
 public class NewDirectoryAction extends FileManagerAction {
 
-	public NewDirectoryAction() {
-		setName("New Directory");
-		setImage("add-folder");
-		setPosition(1);
+    public NewDirectoryAction() {
+        setName("New Directory");
+        setImage("add-folder");
+        setPosition(1);
 
-	}
+    }
 
-	@Override
-	public void actionPerformed(ActionEvent evt) {
-		final FileManager fileManager = (FileManager) evt.getSource();
+    @Override
+    public void actionPerformed(ActionEvent evt) {
+        final FileManager fileManager = (FileManager) evt.getSource();
 
-		Folder form = new Folder();
-		if (fileManager.getCurrentDirectory() != null) {
-			form.setParent(fileManager.getCurrentDirectory().getName());
-		}
+        Folder form = new Folder();
+        if (fileManager.getCurrentDirectory() != null) {
+            form.setParent(fileManager.getCurrentDirectory().getName());
+        }
 
-		ViewDescriptor descriptor = viewDescriptor("form", Folder.class, true)
-				.sortFields("name", "parent", "root")
-				.fields(
-						field("parent", "Parent", "label"))
-				.layout("columns", "1")
-				.build(); 
+        ViewDescriptor descriptor = viewDescriptor("form", Folder.class, true)
+                .sortFields("parent", "name")
+                .fields(
+                        field("parent", "Parent", "label"))
+                .layout("columns", "1")
+                .build();
 
-		final Viewer viewer = new Viewer(descriptor, form);
-		viewer.setWidth("600px");
+        final Viewer viewer = new Viewer(descriptor, form);
+        viewer.setWidth("600px");
 
-		final Window window = ZKUtil.createWindow("New Directory");
+        final Window window = ZKUtil.createWindow("New Directory");
 
-		window.appendChild(viewer);
+        window.appendChild(viewer);
 
-		Button btn = new Button("Create Directory");
-		btn.setStyle("float:right");
-		window.appendChild(btn);
-		btn.addEventListener(Events.ON_CLICK, event -> {
-			Folder form1 = (Folder) viewer.getValue();
-			File parent = fileManager.getRootDirectory();
-			if (!form1.isRoot() && fileManager.getCurrentDirectory() != null) {
-				if (fileManager.getCurrentDirectory().isReadOnly()) {
-					UIMessages.showMessage("Cannot create subdirectory because selected directory is read only", MessageType.WARNING);
-					return;
-				}
-				parent = fileManager.getCurrentDirectory().getFile();
-			}
-			if (form1.getName() != null && !form1.getName().isEmpty()) {
+        Button btn = new Button("Create Directory");
+        btn.setStyle("float:right");
+        window.appendChild(btn);
+        btn.addEventListener(Events.ON_CLICK, event -> {
+            Folder form1 = (Folder) viewer.getValue();
+            File parent = fileManager.getCurrentDirectory().getFile();
+            if (fileManager.getCurrentDirectory() != null) {
+                if (fileManager.getCurrentDirectory().isReadOnly()) {
+                    UIMessages.showMessage("Cannot create subdirectory because selected directory is read only", MessageType.WARNING);
+                    return;
+                }
+            }
+            if (form1.getName() != null && !form1.getName().isEmpty()) {
 
-				File newdir = new File(parent, form1.getName());
-				if (!newdir.exists()) {
-					newdir.mkdirs();
-					window.detach();
-					UIMessages.showMessage("Directory " + form1.getName() + " created successfully");
-					if (form1.isRoot()) {
-						fileManager.reload();
-					} else {
-						fileManager.reloadSelected();
-					}
+                File newdir = new File(parent, form1.getName());
+                if (!newdir.exists()) {
+                    newdir.mkdirs();
+                    window.detach();
+                    UIMessages.showMessage("Directory " + form1.getName() + " created successfully");
 
-				} else {
-					UIMessages.showMessage("Already exists  directory with name " + form1.getName(), MessageType.ERROR);
-				}
-			} else {
-				UIMessages.showMessage("Enter directory name", MessageType.ERROR);
-			}
-		});
+                    fileManager.reloadSelected();
 
-		window.doModal();
+                } else {
+                    UIMessages.showMessage("Already exists  directory with name " + form1.getName(), MessageType.ERROR);
+                }
+            } else {
+                UIMessages.showMessage("Enter directory name", MessageType.ERROR);
+            }
+        });
 
-	}
+        window.doModal();
+
+    }
 
 }
