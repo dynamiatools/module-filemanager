@@ -1,51 +1,91 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!-- Document : lang-addon.xml Created on : 17 de noviembre de 2010, 11:14 
-AM Author : mario Description: Purpose of the document follows. -->
+	AM Author : mario Description: Purpose of the document follows. -->
 
 <language-addon>
-    <addon-name>dynamiafilemanager</addon-name>
-    <language-name>xul/html</language-name>
-    
-     <stylesheet href="/zkau/web/filemanager/css/texteditor.css" type="text/css"/>
+	<addon-name>dynamiafilemanager</addon-name>
+	<language-name>xul/html</language-name>
 
-    <component>
-        <component-name>filemanager</component-name>
-        <component-class>tools.dynamia.modules.filemanager.FileManager
-        </component-class>
-        <widget-class>zul.wgt.Div</widget-class>
+	<stylesheet href="/zkau/web/filemanager/css/texteditor.css"
+		type="text/css" />
 
-        <annotation>
-            <annotation-name>default-bind</annotation-name>
-            <property-name>rootDirectory</property-name>
-            <attribute>
-                <attribute-name>access</attribute-name>
-                <attribute-value>both</attribute-value>
-            </attribute>
-            <attribute>
-                <attribute-name>save-when</attribute-name>
-                <attribute-value>self.onFileChanged</attribute-value>
-            </attribute>
-        </annotation>
-        <annotation>
-            <annotation-name>ZKBIND</annotation-name>
-            <property-name>rootDirectory</property-name>
-            <attribute>
-                <attribute-name>ACCESS</attribute-name>
-                <attribute-value>both</attribute-value>
-            </attribute>
-            <attribute>
-                <attribute-name>SAVE_EVENT</attribute-name>
-                <attribute-value>onFileChanged</attribute-value>
-            </attribute>
-        </annotation>
+	<component>
+		<component-name>filemanager</component-name>
+		<component-class>tools.dynamia.modules.filemanager.FileManager
+		</component-class>
+		<widget-class>zul.wgt.Div</widget-class>
 
-        <mold>
-            <mold-name>default</mold-name>
-            <mold-uri>mold/div.js</mold-uri>
-        </mold>
+		<annotation>
+			<annotation-name>default-bind</annotation-name>
+			<property-name>rootDirectory</property-name>
+			<attribute>
+				<attribute-name>access</attribute-name>
+				<attribute-value>both</attribute-value>
+			</attribute>
+			<attribute>
+				<attribute-name>save-when</attribute-name>
+				<attribute-value>self.onFileChanged</attribute-value>
+			</attribute>
+		</annotation>
+		<annotation>
+			<annotation-name>ZKBIND</annotation-name>
+			<property-name>rootDirectory</property-name>
+			<attribute>
+				<attribute-name>ACCESS</attribute-name>
+				<attribute-value>both</attribute-value>
+			</attribute>
+			<attribute>
+				<attribute-name>SAVE_EVENT</attribute-name>
+				<attribute-value>onFileChanged</attribute-value>
+			</attribute>
+		</annotation>
 
-    </component>
+		<mold>
+			<mold-name>default</mold-name>
+			<mold-uri>mold/div.js</mold-uri>
+		</mold>
+
+	</component>
+
+	<component>
+		<component-name>texteditor</component-name>
+		<component-class>tools.dynamia.modules.filemanager.ui.TextEditor.contentbox
+		</component-class>
+		<widget-class>zul.wnd.Window</widget-class>
+
+
+		<annotation>
+			<annotation-name>default-bind</annotation-name>
+			<property-name>value</property-name>
+			<attribute>
+				<attribute-name>access</attribute-name>
+				<attribute-value>both</attribute-value>
+			</attribute>
+			<attribute>
+				<attribute-name>save-when</attribute-name>
+				<attribute-value>self.onChange</attribute-value>
+			</attribute>
+		</annotation>
+		<annotation>
+			<annotation-name>ZKBIND</annotation-name>
+			<property-name>value</property-name>
+			<attribute>
+				<attribute-name>ACCESS</attribute-name>
+				<attribute-value>both</attribute-value>
+			</attribute>
+			<attribute>
+				<attribute-name>SAVE_EVENT</attribute-name>
+				<attribute-value>onChange</attribute-value>
+			</attribute>
+		</annotation>
+		<mold>
+			<mold-name>default</mold-name>
+			<mold-uri>mold/window.js</mold-uri>
+			<css-uri>css/window.css.dsp</css-uri>
+		</mold>
+	</component>
+
 
 
 </language-addon>
