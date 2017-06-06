@@ -63,7 +63,7 @@ public class ViewImageAction extends FileManagerAction {
 
 	}
 
-	private boolean isImage(FileInfo target) {
+	public static boolean isImage(FileInfo target) {
 		String ext = target.getExtension();
 		return "jpg".equalsIgnoreCase(ext) || "png".equalsIgnoreCase(ext) || "gif".equalsIgnoreCase(ext);
 	}

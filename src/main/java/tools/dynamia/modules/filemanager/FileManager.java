@@ -7,21 +7,26 @@ package tools.dynamia.modules.filemanager;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.zkoss.image.AImage;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Center;
 import org.zkoss.zul.Div;
+import org.zkoss.zul.East;
+import org.zkoss.zul.Image;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.North;
+import org.zkoss.zul.Vlayout;
 import org.zkoss.zul.West;
 
 import tools.dynamia.actions.Action;
@@ -36,6 +41,7 @@ import tools.dynamia.viewers.util.Viewers;
 import tools.dynamia.zk.actions.ActionToolbar;
 import tools.dynamia.zk.viewers.form.FormView;
 import tools.dynamia.zk.viewers.table.TableView;
+import tools.dynamia.zk.viewers.ui.Viewer;
 
 /**
  *
@@ -43,238 +49,304 @@ import tools.dynamia.zk.viewers.table.TableView;
  */
 public class FileManager extends Div implements ActionEventBuilder, View<FileInfo> {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = 5270252199212721490L;
-    private Borderlayout layout;
-    private ActionToolbar toolbar;
-    private File rootDirectory;
-    private DirectoryTree directoryTree;
-    private TableView<FileInfo> tableFiles;
-    private FileInfo currentDirectory;
-    private View parentView;
-    private ViewDescriptor viewDescriptor;
-    private FileInfo value;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = 5270252199212721490L;
+	private Borderlayout layout;
+	private ActionToolbar toolbar;
+	private File rootDirectory;
+	private DirectoryTree directoryTree;
+	private TableView<FileInfo> tableFiles;
+	private FileInfo currentDirectory;
+	private View parentView;
+	private ViewDescriptor viewDescriptor;
+	private FileInfo value;
 
-    public FileManager() {
+	public FileManager() {
 
-    }
+	}
 
-    public FileManager(File directory) {
-        this.rootDirectory = directory;
-        this.currentDirectory = new FileInfo(directory);
-    }
+	public FileManager(File directory) {
+		this.rootDirectory = directory;
+		this.currentDirectory = new FileInfo(directory);
+	}
 
-    public FileManager(Path path) {
-        this(path.toFile());
-    }
+	public FileManager(Path path) {
+		this(path.toFile());
+	}
 
-    @Override
-    public FileInfo getValue() {
+	@Override
+	public FileInfo getValue() {
 
-        try {
-            value = getSelectedFiles().get(0);
-        } catch (Exception e) {
-            value = null;
-        }
-        return value;
-    }
+		try {
+			value = getSelectedFiles().get(0);
+		} catch (Exception e) {
+			value = null;
+		}
+		return value;
+	}
 
-    @Override
-    public void setValue(FileInfo value) {
-        if (this.value != value) {
-            this.value = value;
-            Events.postEvent(new Event(FormView.ON_VALUE_CHANGED, this, this.value));
+	@Override
+	public void setValue(FileInfo value) {
+		if (this.value != value) {
+			this.value = value;
+			Events.postEvent(new Event(FormView.ON_VALUE_CHANGED, this, this.value));
 
-            if (value != null) {
-                currentDirectory = new FileInfo(value.getFile().getParentFile());
+			if (value != null) {
+				currentDirectory = new FileInfo(value.getFile().getParentFile());
 
-                if (rootDirectory == null) {
-                    rootDirectory = currentDirectory.getFile();
-                    initLayout();
-                }
-            }
-        }
+				if (rootDirectory == null) {
+					rootDirectory = currentDirectory.getFile();
+					initLayout();
+				}
+			}
+		}
 
-    }
+	}
 
-    @Override
-    public void setViewDescriptor(ViewDescriptor viewDescriptor) {
-        this.viewDescriptor = viewDescriptor;
+	@Override
+	public void setViewDescriptor(ViewDescriptor viewDescriptor) {
+		this.viewDescriptor = viewDescriptor;
 
-    }
+	}
 
-    @Override
-    public ViewDescriptor getViewDescriptor() {
-        return viewDescriptor;
-    }
+	@Override
+	public ViewDescriptor getViewDescriptor() {
+		return viewDescriptor;
+	}
 
-    @Override
-    public View getParentView() {
-        return parentView;
-    }
+	@Override
+	public View getParentView() {
+		return parentView;
+	}
 
-    @Override
-    public void setParentView(View view) {
-        this.parentView = view;
-    }
+	@Override
+	public void setParentView(View view) {
+		this.parentView = view;
+	}
 
-    private void initLayout() {
+	private void initLayout() {
 
-        getChildren().clear();
-        setVflex("1");
-        setHflex("1");
+		getChildren().clear();
+		setVflex("1");
+		setHflex("1");
 
-        if (rootDirectory == null || !rootDirectory.exists()) {
-            Label error = new Label("Root Directory is null or dont exists");
-            error.setStyle("color:red");
-            error.setParent(this);
-            return;
-        }
+		if (rootDirectory == null || !rootDirectory.exists()) {
+			Label error = new Label("Root Directory is null or dont exists");
+			error.setStyle("color:red");
+			error.setParent(this);
+			return;
+		}
 
-        layout = new Borderlayout();
-        layout.appendChild(new North());
-        layout.appendChild(new Center());
-        layout.appendChild(new West());
-        layout.setVflex("1");
-        layout.setHflex("1");
+		layout = new Borderlayout();
+		layout.appendChild(new North());
+		layout.appendChild(new Center());
+		layout.appendChild(new West());
+		layout.appendChild(new East());
+		layout.setVflex("1");
+		layout.setHflex("1");
 
-        appendChild(layout);
+		appendChild(layout);
 
-        toolbar = new ActionToolbar(this);
-        layout.getNorth().appendChild(toolbar);
+		toolbar = new ActionToolbar(this);
+		layout.getNorth().appendChild(toolbar);
 
-        directoryTree = new DirectoryTree(rootDirectory);
-        directoryTree.addEventListener(Events.ON_SELECT, t -> {
-            File selectedDir = directoryTree.getSelected();
-            if (selectedDir != null) {
-                this.currentDirectory = new FileInfo(selectedDir);
-                loadFiles(selectedDir);
-            }
-        });
-        layout.getWest().appendChild(directoryTree);
-        layout.getWest().setWidth("25%");
-        layout.getWest().setTitle("Directories");
+		directoryTree = new DirectoryTree(rootDirectory);
+		directoryTree.addEventListener(Events.ON_SELECT,
 
-        tableFiles = (TableView<FileInfo>) Viewers.getView(FileInfo.class, "table", null);
-        tableFiles.setEmptyMessage("No files found!");
-        layout.getCenter().appendChild(tableFiles);
-        loadActions();
+				t -> {
 
-    }
+					File selectedDir = directoryTree.getSelected();
+					if (selectedDir != null) {
+						this.currentDirectory = new FileInfo(selectedDir);
+						loadFiles(selectedDir);
+					}
+				});
+		layout.getWest().appendChild(directoryTree);
+		layout.getWest().setWidth("20%");
+		layout.getWest().setSplittable(true);
+		layout.getWest().setCollapsible(true);
+		layout.getWest().setTitle("Directories");
 
-    @Override
-    public void setParent(Component parent) {
-        initLayout();
-        super.setParent(parent); // To change body of generated methods, choose
-        // Tools | Templates.
-    }
+		tableFiles = (TableView<FileInfo>) Viewers.getView(FileInfo.class, "table", null);
+		tableFiles.setEmptyMessage("No files found!");
+		tableFiles.setAutopaging(true);
+		layout.getCenter().appendChild(tableFiles);
+		
+		
+		layout.getEast().setTitle("Preview");
+		layout.getEast().setWidth("18%");
+		layout.getEast().setCollapsible(true);
+		layout.getEast().setOpen(true);
+		layout.getEast().setAutoscroll(true);
+		loadActions();
+		loadPreview();
 
-    @Override
-    public ActionEvent buildActionEvent(Object source, Map<String, Object> params) {
-        return new ActionEvent(tableFiles.isMultiple() ? getSelectedFiles() : tableFiles.getSelected(), this);
-    }
+	}
 
-    public String getSelectedFilePath() {
-        FileInfo fileInfo = tableFiles.getSelected();
-        if (fileInfo != null) {
-            String path = fileInfo.getFile().getPath();
-            path = path.substring(path.indexOf(rootDirectory.getName()) + rootDirectory.getName().length() + 1);
+	private void loadPreview() {
+		tableFiles.addEventListener(Events.ON_SELECT, e->{
+			layout.getEast().getChildren().clear();
+			FileInfo selected = getSelectedFile();
+			if(selected!=null && !selected.isDirectory()){
+				showPreview(selected);				
+			}
+			
+		});
+		
+	}
 
-            return path;
-        } else {
-            return "";
-        }
+	private void showPreview(FileInfo selected) {
+		Vlayout preview = new Vlayout();
+		
+		if(selected.isImage()){
+			try {
+				Image image = new Image();
+				image.setContent(new AImage(selected.getFile()));
+				image.setWidth("100%");
+				preview.appendChild(image);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		Viewer viewer = new Viewer("form", FileInfo.class, selected);
+		FormView form = (FormView) viewer.getView();
+		form.setReadOnly(true);
+		preview.appendChild(form);
+		
+		layout.getEast().appendChild(preview);
+		
+	}
 
-    }
+	@Override
+	public void setParent(Component parent) {
+		initLayout();
+		super.setParent(parent); // To change body of generated methods, choose
+		// Tools | Templates.
+	}
 
-    public List<FileInfo> getSelectedFiles() {
-        List<FileInfo> selecteds = new ArrayList<>();
+	@Override
+	public ActionEvent buildActionEvent(Object source, Map<String, Object> params) {
+		return new ActionEvent(tableFiles.isMultiple() ? getSelectedFiles() : tableFiles.getSelected(), this);
+	}
 
-        if (tableFiles.getSelectedCount() > 0) {
-            for (Listitem item : tableFiles.getSelectedItems()) {
-                selecteds.add((FileInfo) item.getValue());
-            }
-        }
+	public String getSelectedFilePath() {
+		FileInfo fileInfo = tableFiles.getSelected();
+		if (fileInfo != null) {
+			String path = fileInfo.getFile().getPath();
+			path = path.substring(path.indexOf(rootDirectory.getName()) + rootDirectory.getName().length() + 1);
 
-        return selecteds;
-    }
+			return path;
+		} else {
+			return "";
+		}
 
-    private void loadFiles(File selectedDirectory) {
-        if (selectedDirectory != null) {
-            File files[] = selectedDirectory.listFiles((FileFilter) pathname -> pathname.isFile());
+	}
+	
+	public FileInfo getSelectedFile(){
+		FileInfo fileInfo = tableFiles.getSelected();
+		return fileInfo;
+	}
 
-            List<FileInfo> fileInfos = new ArrayList<>();
-            if (files != null) {
-                for (File file : files) {
-                    fileInfos.add(new FileInfo(file));
-                }
-            }
-            Collections.sort(fileInfos, (f1, f2) -> f1.getName().toLowerCase().compareTo(f2.getName().toLowerCase()));
-            tableFiles.setValue(fileInfos);
-        }
-    }
+	public List<FileInfo> getSelectedFiles() {
+		List<FileInfo> selecteds = new ArrayList<>();
 
-    private void loadActions() {
-        List<Action> actions = new ArrayList<>();
-        for (FileManagerAction action : Containers.get().findObjects(FileManagerAction.class)) {
-            actions.add(action);
-        }
-        Collections.sort(actions, (o1, o2) -> {
-            Double pos1 = o1.getPosition();
-            Double pos2 = o2.getPosition();
-            return pos1.compareTo(pos2);
-        });
+		if (tableFiles.getSelectedCount() > 0) {
+			for (Listitem item : tableFiles.getSelectedItems()) {
+				selecteds.add((FileInfo) item.getValue());
+			}
+		}
 
-        for (Action action : actions) {
-            toolbar.addAction(action);
+		return selecteds;
+	}
 
-        }
-    }
+	private void loadFiles(File selectedDirectory) {
+		if (selectedDirectory != null) {
 
-    public void reload() {
-        directoryTree.reload();
-        updateUI();
-    }
+			List<FileInfo> fileInfos = new ArrayList<>();
+			File files[] = selectedDirectory
+					.listFiles((FileFilter) pathname -> pathname.isFile() || pathname.isDirectory());
+			if (files != null) {
+				for (File file : files) {
+					fileInfos.add(new FileInfo(file));
+				}
+			}
+			Collections.sort(fileInfos, (f1, f2) -> {
+				int order = f1.getName().toLowerCase().compareTo(f2.getName().toLowerCase());
+				if (f1.isDirectory() && !f2.isDirectory()) {
+					order = -1;
+				} else if (!f1.isDirectory() && f2.isDirectory()) {
+					order = 1;
+				}
 
-    public void setRootDirectory(File rootDirectory) {
-        this.rootDirectory = rootDirectory;
-        initLayout();
-    }
+				return order;
+			});
+			tableFiles.setValue(fileInfos);
+		}
+	}
 
-    public void setRootDirectory(String rootPath) {
-        setRootDirectory(new File(rootPath));
-    }
+	private void loadActions() {
+		List<Action> actions = new ArrayList<>();
+		for (FileManagerAction action : Containers.get().findObjects(FileManagerAction.class)) {
+			actions.add(action);
+		}
+		Collections.sort(actions, (o1, o2) -> {
+			Double pos1 = o1.getPosition();
+			Double pos2 = o2.getPosition();
+			return pos1.compareTo(pos2);
+		});
 
-    public void reloadSelected() {
-        directoryTree.reloadSelectedDirectory();
-        updateUI();
-    }
+		for (Action action : actions) {
+			toolbar.addAction(action);
 
-    public File getRootDirectory() {
-        return rootDirectory;
-    }
+		}
+	}
 
-    public FileInfo getCurrentDirectory() {
-        return currentDirectory;
-    }
+	public void reload() {
+		directoryTree.reload();
+		updateUI();
+	}
 
-    public void updateUI() {
-        if (currentDirectory != null) {
-            loadFiles(getCurrentDirectory().getFile());
-        } else {
-            loadFiles(rootDirectory);
+	public void setRootDirectory(File rootDirectory) {
+		this.rootDirectory = rootDirectory;
+		initLayout();
+	}
 
-        }
-    }
+	public void setRootDirectory(String rootPath) {
+		setRootDirectory(new File(rootPath));
+	}
 
-    public TableView<FileInfo> getTableFiles() {
-        return tableFiles;
-    }
+	public void reloadSelected() {
+		directoryTree.reloadSelectedDirectory();
+		updateUI();
+	}
 
-    public DirectoryTree getDirectoryTree() {
-        return directoryTree;
-    }
+	public File getRootDirectory() {
+		return rootDirectory;
+	}
+
+	public FileInfo getCurrentDirectory() {
+		return currentDirectory;
+	}
+
+	public void updateUI() {
+		if (currentDirectory != null) {
+			loadFiles(getCurrentDirectory().getFile());
+		} else {
+			loadFiles(rootDirectory);
+
+		}
+	}
+
+	public TableView<FileInfo> getTableFiles() {
+		return tableFiles;
+	}
+
+	public DirectoryTree getDirectoryTree() {
+		return directoryTree;
+	}
 
 }

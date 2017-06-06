@@ -1,0 +1,25 @@
+view: form
+beanClass: tools.dynamia.io.FileInfo
+autofields: false
+customizer: 
+
+fields:
+    
+ 
+    name:
+    fileSize:
+        label: Size
+      
+    fileDate:
+        label: Date
+  
+    extension:
+    description:
+    icon:
+    readOnly:
+    directory:
+    image:
+                
+                
+layout:
+  columns: 1

@@ -1,11 +1,11 @@
 view: table
 beanClass: tools.dynamia.io.FileInfo
 autofields: false
-
+customizer: 
 
 fields:
     
-    extension:
+    icon:
         label: T
         component: iconimage
         params:
