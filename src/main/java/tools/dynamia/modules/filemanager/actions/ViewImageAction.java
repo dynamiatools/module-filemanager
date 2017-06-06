@@ -23,6 +23,7 @@ public class ViewImageAction extends FileManagerAction {
 		setName("View Image");
 		setImage("photos");
 		setPosition(3.2);
+		setMenuSupported(true);
 	}
 
 	@Override

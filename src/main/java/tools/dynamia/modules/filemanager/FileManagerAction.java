@@ -16,21 +16,30 @@ import tools.dynamia.zk.actions.ToolbarbuttonActionRenderer;
  */
 public abstract class FileManagerAction extends AbstractAction implements Indexable {
 
-    private int index;
+	private int index;
+	private boolean menuSupported;
 
-    @Override
-    public ActionRenderer getRenderer() {
-        return new ToolbarbuttonActionRenderer();
-    }
+	@Override
+	public ActionRenderer getRenderer() {
+		return new ToolbarbuttonActionRenderer();
+	}
 
-    @Override
-    public int getIndex() {
-        return index;
-    }
+	@Override
+	public int getIndex() {
+		return index;
+	}
 
-    @Override
-    public void setIndex(int index) {
-        this.index = index;
-    }
+	@Override
+	public void setIndex(int index) {
+		this.index = index;
+	}
+
+	public boolean isMenuSupported() {
+		return menuSupported;
+	}
+
+	public void setMenuSupported(boolean menuSupported) {
+		this.menuSupported = menuSupported;
+	}
 
 }

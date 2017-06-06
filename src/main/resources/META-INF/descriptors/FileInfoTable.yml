@@ -17,14 +17,14 @@ fields:
         params:
             header:
                 width: 100px
+                align: right
     fileDate:
-        label: Date
+        label: Last update
         params:
             header:
                 width: 200px
+                align: center
                 
                 
-params:
-  checkmark: true
-  
+
     

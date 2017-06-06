@@ -21,6 +21,7 @@ public class CopyFileAction extends FileManagerAction {
 		setName("Copy");
 		setImage("copy");
 		setPosition(5.1);
+		setMenuSupported(true);
 	}
 
 	@Override

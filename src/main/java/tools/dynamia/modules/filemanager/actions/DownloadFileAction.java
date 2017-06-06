@@ -29,6 +29,7 @@ public class DownloadFileAction extends FileManagerAction {
 		setName("Dowload File");
 		setImage("down");
 		setPosition(3.1);
+		setMenuSupported(true);
 	}
 
 	@Override

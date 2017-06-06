@@ -1,7 +1,7 @@
 view: form
 beanClass: tools.dynamia.io.FileInfo
 autofields: false
-customizer: 
+
 
 fields:
     
@@ -11,7 +11,12 @@ fields:
         label: Size
       
     fileDate:
-        label: Date
+        component: textbox
+        label: Last update
+        params:
+          converter: converters.DateTime
+       
+        
   
     extension:
     description:

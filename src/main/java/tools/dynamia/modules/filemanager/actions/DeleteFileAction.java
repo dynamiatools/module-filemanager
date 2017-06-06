@@ -25,6 +25,7 @@ public class DeleteFileAction extends FileManagerAction {
 		setName("Delete Selected File");
 		setImage("delete");
 		setPosition(4);
+		setMenuSupported(true);
 	}
 
 	@Override

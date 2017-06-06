@@ -25,6 +25,8 @@ import org.zkoss.zul.East;
 import org.zkoss.zul.Image;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Listitem;
+import org.zkoss.zul.Menuitem;
+import org.zkoss.zul.Menupopup;
 import org.zkoss.zul.North;
 import org.zkoss.zul.Vlayout;
 import org.zkoss.zul.West;
@@ -35,10 +37,13 @@ import tools.dynamia.actions.ActionEventBuilder;
 import tools.dynamia.integration.Containers;
 import tools.dynamia.io.FileInfo;
 import tools.dynamia.modules.filemanager.ui.DirectoryTree;
+import tools.dynamia.ui.icons.IconSize;
 import tools.dynamia.viewers.View;
 import tools.dynamia.viewers.ViewDescriptor;
 import tools.dynamia.viewers.util.Viewers;
 import tools.dynamia.zk.actions.ActionToolbar;
+import tools.dynamia.zk.actions.MenuitemActionRenderer;
+import tools.dynamia.zk.util.ZKUtil;
 import tools.dynamia.zk.viewers.form.FormView;
 import tools.dynamia.zk.viewers.table.TableView;
 import tools.dynamia.zk.viewers.ui.Viewer;
@@ -171,36 +176,45 @@ public class FileManager extends Div implements ActionEventBuilder, View<FileInf
 
 		tableFiles = (TableView<FileInfo>) Viewers.getView(FileInfo.class, "table", null);
 		tableFiles.setEmptyMessage("No files found!");
-		tableFiles.setAutopaging(true);
+		tableFiles.setMold("default");
+		tableFiles.setContextMenu(createContextMenu());
+		
 		layout.getCenter().appendChild(tableFiles);
-		
-		
+
 		layout.getEast().setTitle("Preview");
-		layout.getEast().setWidth("18%");
+		layout.getEast().setWidth("20%");
 		layout.getEast().setCollapsible(true);
 		layout.getEast().setOpen(true);
 		layout.getEast().setAutoscroll(true);
+		layout.getEast().setSplittable(true);
 		loadActions();
 		loadPreview();
 
 	}
 
+	private Menupopup createContextMenu() {
+		Menupopup popup = new Menupopup();
+		appendChild(popup);
+
+		return popup;
+	}
+
 	private void loadPreview() {
-		tableFiles.addEventListener(Events.ON_SELECT, e->{
+		tableFiles.addEventListener(Events.ON_SELECT, e -> {
 			layout.getEast().getChildren().clear();
 			FileInfo selected = getSelectedFile();
-			if(selected!=null && !selected.isDirectory()){
-				showPreview(selected);				
+			if (selected != null) {
+				showPreview(selected);
 			}
-			
+
 		});
-		
+
 	}
 
 	private void showPreview(FileInfo selected) {
 		Vlayout preview = new Vlayout();
-		
-		if(selected.isImage()){
+
+		if (selected.isImage()) {
 			try {
 				Image image = new Image();
 				image.setContent(new AImage(selected.getFile()));
@@ -211,14 +225,21 @@ public class FileManager extends Div implements ActionEventBuilder, View<FileInf
 				e.printStackTrace();
 			}
 		}
-		
+
+		Containers.get().findObjects(FileManagerPreviewExtension.class).forEach(ext -> {
+			Object view = ext.getView(selected);
+			if (view != null && view instanceof Component) {
+				preview.appendChild((Component) view);
+			}
+		});
+
 		Viewer viewer = new Viewer("form", FileInfo.class, selected);
 		FormView form = (FormView) viewer.getView();
 		form.setReadOnly(true);
 		preview.appendChild(form);
-		
+
 		layout.getEast().appendChild(preview);
-		
+
 	}
 
 	@Override
@@ -245,8 +266,8 @@ public class FileManager extends Div implements ActionEventBuilder, View<FileInf
 		}
 
 	}
-	
-	public FileInfo getSelectedFile(){
+
+	public FileInfo getSelectedFile() {
 		FileInfo fileInfo = tableFiles.getSelected();
 		return fileInfo;
 	}
@@ -289,18 +310,29 @@ public class FileManager extends Div implements ActionEventBuilder, View<FileInf
 	}
 
 	private void loadActions() {
-		List<Action> actions = new ArrayList<>();
+		List<FileManagerAction> actions = new ArrayList<>();
+
 		for (FileManagerAction action : Containers.get().findObjects(FileManagerAction.class)) {
 			actions.add(action);
+
 		}
+
 		Collections.sort(actions, (o1, o2) -> {
 			Double pos1 = o1.getPosition();
 			Double pos2 = o2.getPosition();
 			return pos1.compareTo(pos2);
 		});
 
-		for (Action action : actions) {
+		Menupopup contextMenu = tableFiles.getContextMenu();
+		contextMenu.getChildren().clear();
+		MenuitemActionRenderer menuRenderer = new MenuitemActionRenderer();
+		for (FileManagerAction action : actions) {
 			toolbar.addAction(action);
+
+			if (action.isMenuSupported()) {
+				Menuitem item = menuRenderer.render(action, this);
+				contextMenu.appendChild(item);
+			}
 
 		}
 	}

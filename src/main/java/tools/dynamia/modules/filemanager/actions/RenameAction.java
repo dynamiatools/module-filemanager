@@ -19,6 +19,7 @@ public class RenameAction extends FileManagerAction {
 		setName("Rename");
 		setImage("fa-text-width");
 		setPosition(4.9);
+		setMenuSupported(true);
 	}
 
 	@Override

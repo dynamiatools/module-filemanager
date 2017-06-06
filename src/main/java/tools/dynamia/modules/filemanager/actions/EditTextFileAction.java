@@ -27,6 +27,7 @@ public class EditTextFileAction extends FileManagerAction {
         setName("Edit Text File");
         setImage("edit-page");
         setPosition(5.01);
+    	setMenuSupported(true);
     }
 
     @Override
