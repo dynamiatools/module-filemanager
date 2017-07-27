@@ -17,6 +17,7 @@ import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Caption;
 import org.zkoss.zul.Center;
+import org.zkoss.zul.North;
 import org.zkoss.zul.Window;
 
 import tools.dynamia.actions.ActionEvent;
@@ -42,7 +43,7 @@ public class TextEditor extends Window implements ActionEventBuilder {
 		BindingComponentIndex.getInstance().put("value", TextEditor.class);
 
 	}
-	
+
 	/**
 	 * 
 	 */
@@ -67,12 +68,12 @@ public class TextEditor extends Window implements ActionEventBuilder {
 	public void setFileManager(FileManager fileManager) {
 		this.fileManager = fileManager;
 	}
-	
-	public void setValue(String value){
+
+	public void setValue(String value) {
 		contentbox.setValue(value);
 	}
-	
-	public String getValue(){
+
+	public String getValue() {
 		return contentbox.getValue();
 	}
 
@@ -83,14 +84,12 @@ public class TextEditor extends Window implements ActionEventBuilder {
 
 		toolbar = new ActionToolbar(this);
 		toolbar.setSclass("text-editor-toolbar");
-		Caption caption = new Caption();
-		caption.setHeight("60px");
-		caption.appendChild(toolbar);
-
-		appendChild(caption);
 
 		layout = new Borderlayout();
 		layout.appendChild(new Center());
+		layout.appendChild(new North());
+
+		layout.getNorth().appendChild(toolbar);
 
 		contentbox = new Textarea();
 		contentbox.setStyle("width: 100%; height: 100%");
@@ -100,7 +99,6 @@ public class TextEditor extends Window implements ActionEventBuilder {
 				"if(event.keyCode===9){var v=this.value,s=this.selectionStart,e=this.selectionEnd;this.value=v.substring(0, s)+'\\t'+v.substring(e);this.selectionStart=this.selectionEnd=s+1;return false;}");
 		contentbox.addEventListener(Events.ON_CHANGE, e -> Events.postEvent(this, e));
 
-		
 		layout.getCenter().appendChild(contentbox);
 		layout.setWidth("100%");
 		layout.setHeight("100%");
