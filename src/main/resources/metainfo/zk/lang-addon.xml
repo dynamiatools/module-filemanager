@@ -4,88 +4,94 @@
 	AM Author : mario Description: Purpose of the document follows. -->
 
 <language-addon>
-	<addon-name>dynamiafilemanager</addon-name>
-	<language-name>xul/html</language-name>
+    <addon-name>dynamiafilemanager</addon-name>
+    <language-name>xul/html</language-name>
 
-	<stylesheet href="/zkau/web/filemanager/css/texteditor.css"
-		type="text/css" />
-
-	<component>
-		<component-name>filemanager</component-name>
-		<component-class>tools.dynamia.modules.filemanager.FileManager
-		</component-class>
-		<widget-class>zul.wgt.Div</widget-class>
-
-		<annotation>
-			<annotation-name>default-bind</annotation-name>
-			<property-name>rootDirectory</property-name>
-			<attribute>
-				<attribute-name>access</attribute-name>
-				<attribute-value>both</attribute-value>
-			</attribute>
-			<attribute>
-				<attribute-name>save-when</attribute-name>
-				<attribute-value>self.onFileChanged</attribute-value>
-			</attribute>
-		</annotation>
-		<annotation>
-			<annotation-name>ZKBIND</annotation-name>
-			<property-name>rootDirectory</property-name>
-			<attribute>
-				<attribute-name>ACCESS</attribute-name>
-				<attribute-value>both</attribute-value>
-			</attribute>
-			<attribute>
-				<attribute-name>SAVE_EVENT</attribute-name>
-				<attribute-value>onFileChanged</attribute-value>
-			</attribute>
-		</annotation>
-
-		<mold>
-			<mold-name>default</mold-name>
-			<mold-uri>mold/div.js</mold-uri>
-		</mold>
-
-	</component>
-
-	<component>
-		<component-name>texteditor</component-name>
-		<component-class>tools.dynamia.modules.filemanager.ui.TextEditor.contentbox
-		</component-class>
-		<widget-class>zul.wnd.Window</widget-class>
+    <stylesheet href="/zkau/web/filemanager/css/texteditor.css" type="text/css"/>
+    <stylesheet href="/zkau/web/filemanager/css/codemirror.css" type="text/css"/>
+    <javascript src="/zkau/web/filemanager/js/codemirror.js"/>
+    <javascript src="/zkau/web/filemanager/js/mode/javascript.js"/>
+    <javascript src="/zkau/web/filemanager/js/mode/htmlmixed.js"/>
+    <javascript src="/zkau/web/filemanager/js/mode/clike.js"/>
+    <javascript src="/zkau/web/filemanager/js/mode/css.js"/>
+    <javascript src="/zkau/web/filemanager/js/mode/groovy.js"/>
 
 
-		<annotation>
-			<annotation-name>default-bind</annotation-name>
-			<property-name>value</property-name>
-			<attribute>
-				<attribute-name>access</attribute-name>
-				<attribute-value>both</attribute-value>
-			</attribute>
-			<attribute>
-				<attribute-name>save-when</attribute-name>
-				<attribute-value>self.onChange</attribute-value>
-			</attribute>
-		</annotation>
-		<annotation>
-			<annotation-name>ZKBIND</annotation-name>
-			<property-name>value</property-name>
-			<attribute>
-				<attribute-name>ACCESS</attribute-name>
-				<attribute-value>both</attribute-value>
-			</attribute>
-			<attribute>
-				<attribute-name>SAVE_EVENT</attribute-name>
-				<attribute-value>onChange</attribute-value>
-			</attribute>
-		</annotation>
-		<mold>
-			<mold-name>default</mold-name>
-			<mold-uri>mold/window.js</mold-uri>
-			<css-uri>css/window.css.dsp</css-uri>
-		</mold>
-	</component>
 
+    <component>
+        <component-name>filemanager</component-name>
+        <component-class>tools.dynamia.modules.filemanager.FileManager
+        </component-class>
+        <widget-class>zul.wgt.Div</widget-class>
+
+        <annotation>
+            <annotation-name>default-bind</annotation-name>
+            <property-name>rootDirectory</property-name>
+            <attribute>
+                <attribute-name>access</attribute-name>
+                <attribute-value>both</attribute-value>
+            </attribute>
+            <attribute>
+                <attribute-name>save-when</attribute-name>
+                <attribute-value>self.onFileChanged</attribute-value>
+            </attribute>
+        </annotation>
+        <annotation>
+            <annotation-name>ZKBIND</annotation-name>
+            <property-name>rootDirectory</property-name>
+            <attribute>
+                <attribute-name>ACCESS</attribute-name>
+                <attribute-value>both</attribute-value>
+            </attribute>
+            <attribute>
+                <attribute-name>SAVE_EVENT</attribute-name>
+                <attribute-value>onFileChanged</attribute-value>
+            </attribute>
+        </annotation>
+
+        <mold>
+            <mold-name>default</mold-name>
+            <mold-uri>mold/div.js</mold-uri>
+        </mold>
+
+    </component>
+
+    <component>
+        <component-name>texteditor</component-name>
+        <component-class>tools.dynamia.modules.filemanager.ui.TextEditor</component-class>
+        <widget-class>zul.wnd.Window</widget-class>
+
+
+        <annotation>
+            <annotation-name>default-bind</annotation-name>
+            <property-name>value</property-name>
+            <attribute>
+                <attribute-name>access</attribute-name>
+                <attribute-value>both</attribute-value>
+            </attribute>
+            <attribute>
+                <attribute-name>save-when</attribute-name>
+                <attribute-value>self.onChange</attribute-value>
+            </attribute>
+        </annotation>
+        <annotation>
+            <annotation-name>ZKBIND</annotation-name>
+            <property-name>value</property-name>
+            <attribute>
+                <attribute-name>ACCESS</attribute-name>
+                <attribute-value>both</attribute-value>
+            </attribute>
+            <attribute>
+                <attribute-name>SAVE_EVENT</attribute-name>
+                <attribute-value>onChange</attribute-value>
+            </attribute>
+        </annotation>
+        <mold>
+            <mold-name>default</mold-name>
+            <mold-uri>mold/window.js</mold-uri>
+            <css-uri>css/window.css.dsp</css-uri>
+        </mold>
+    </component>
 
 
 </language-addon>
