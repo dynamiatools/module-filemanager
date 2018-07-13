@@ -5,21 +5,8 @@
  */
 package tools.dynamia.modules.filemanager.ui;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import org.zkoss.zhtml.Textarea;
 import org.zkoss.zk.ui.event.Events;
-import org.zkoss.zul.Borderlayout;
-import org.zkoss.zul.Caption;
-import org.zkoss.zul.Center;
-import org.zkoss.zul.North;
-import org.zkoss.zul.Window;
-
+import org.zkoss.zul.*;
 import tools.dynamia.actions.ActionEvent;
 import tools.dynamia.actions.ActionEventBuilder;
 import tools.dynamia.actions.ActionLoader;
@@ -32,124 +19,139 @@ import tools.dynamia.zk.ComponentAliasIndex;
 import tools.dynamia.zk.actions.ActionToolbar;
 import tools.dynamia.zk.util.ZKUtil;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 /**
- *
  * @author mario
  */
 public class TextEditor extends Window implements ActionEventBuilder {
 
-	static {
-		ComponentAliasIndex.getInstance().add(TextEditor.class);
-		BindingComponentIndex.getInstance().put("value", TextEditor.class);
+    static {
+        ComponentAliasIndex.getInstance().add(TextEditor.class);
+        BindingComponentIndex.getInstance().put("value", TextEditor.class);
 
-	}
+    }
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -907661981883080140L;
-	private ActionToolbar toolbar;
-	private Borderlayout layout;
-	private File file;
-	private Textarea contentbox;
-	private FileManager fileManager;
+    /**
+     *
+     */
+    private static final long serialVersionUID = -907661981883080140L;
+    private ActionToolbar toolbar;
+    private Borderlayout layout;
+    private File file;
+    private Textbox contentbox;
+    private FileManager fileManager;
 
-	public TextEditor(File file) {
-		this.file = file;
-		init();
-		initActions();
-		readFile();
-	}
+    public TextEditor(File file) {
+        this.file = file;
+        init();
+        initActions();
+        readFile();
+    }
 
-	public FileManager getFileManager() {
-		return fileManager;
-	}
+    public FileManager getFileManager() {
+        return fileManager;
+    }
 
-	public void setFileManager(FileManager fileManager) {
-		this.fileManager = fileManager;
-	}
+    public void setFileManager(FileManager fileManager) {
+        this.fileManager = fileManager;
+    }
 
-	public void setValue(String value) {
-		contentbox.setValue(value);
-	}
+    public void setValue(String value) {
+        contentbox.setValue(value);
+    }
 
-	public String getValue() {
-		return contentbox.getValue();
-	}
+    public String getValue() {
+        return contentbox.getValue();
+    }
 
-	private void init() {
-		setClosable(true);
-		setMaximizable(true);
-		setSclass("text-editor");
+    private void init() {
+        setClosable(true);
+        setMaximizable(true);
+        setSclass("text-editor");
 
-		toolbar = new ActionToolbar(this);
-		toolbar.setSclass("text-editor-toolbar");
+        toolbar = new ActionToolbar(this);
+        toolbar.setSclass("text-editor-toolbar");
 
-		layout = new Borderlayout();
-		layout.appendChild(new Center());
-		layout.appendChild(new North());
+        layout = new Borderlayout();
+        layout.appendChild(new Center());
+        layout.appendChild(new North());
 
-		layout.getNorth().appendChild(toolbar);
+        layout.getNorth().appendChild(toolbar);
 
-		contentbox = new Textarea();
-		contentbox.setStyle("width: 100%; height: 100%");
-		contentbox.setSclass("text-editor-content");
-		contentbox.setDynamicProperty("spellcheck", false);
-		contentbox.setDynamicProperty("onkeydown",
-				"if(event.keyCode===9){var v=this.value,s=this.selectionStart,e=this.selectionEnd;this.value=v.substring(0, s)+'\\t'+v.substring(e);this.selectionStart=this.selectionEnd=s+1;return false;}");
-		contentbox.addEventListener(Events.ON_CHANGE, e -> Events.postEvent(this, e));
+        contentbox = new Textbox();
+        contentbox.setMultiline(true);
+        String mode = findMode();
+        contentbox.setClientDataAttribute("ace-code-editor", "{theme:'ace/theme/eclipse', mode:'ace/mode/" + mode + "'}");
+        contentbox.setWidth("100%");
+        contentbox.setHeight("100%");
 
-		layout.getCenter().appendChild(contentbox);
-		layout.setWidth("100%");
-		layout.setHeight("100%");
+        layout.getCenter().appendChild(contentbox);
+        layout.setWidth("100%");
+        layout.setHeight("100%");
 
-		appendChild(layout);
+        appendChild(layout);
 
-		addEventListener(Events.ON_CLOSE, e -> {
-			e.stopPropagation();
-			UIMessages.showQuestion("Are you sure to close this editor?", () -> {
-				detach();
-				if (fileManager != null) {
-					fileManager.reloadSelected();
-				}
-			});
-		});
-	}
+        addEventListener(Events.ON_CLOSE, e -> {
+            e.stopPropagation();
+            UIMessages.showQuestion("Are you sure to close this editor?", () -> {
+                detach();
+                if (fileManager != null) {
+                    fileManager.reloadSelected();
+                }
+            });
+        });
+    }
 
-	@Override
-	public ActionEvent buildActionEvent(Object source, Map<String, Object> params) {
-		return new ActionEvent(contentbox.getValue(), this);
-	}
+    private String findMode() {
+        String mode = "html";
+        if (file.getName().endsWith(".js")) {
+            mode = "javascript";
+        } else if (file.getName().endsWith(".css")) {
+            mode = "css";
+        }
+        return mode;
+    }
 
-	private void readFile() {
-		try {
-			String content = Files.readAllLines(file.toPath(), Charset.forName("UTF-8")).stream()
-					.collect(Collectors.joining("\n"));
-			contentbox.setValue(content);
-		} catch (IOException ex) {
-			UIMessages.showMessage("Error reading file: " + file.getName() + ". " + ex.getMessage(), MessageType.ERROR);
-			ex.getMessage();
-		}
-	}
+    @Override
+    public ActionEvent buildActionEvent(Object source, Map<String, Object> params) {
+        return new ActionEvent(contentbox.getValue(), this);
+    }
 
-	private void initActions() {
-		ActionLoader<TextEditorAction> loader = new ActionLoader<>(TextEditorAction.class);
-		loader.load().forEach(a -> toolbar.addAction(a));
-	}
+    private void readFile() {
+        try {
+            String content = Files.readAllLines(file.toPath(), Charset.forName("UTF-8")).stream()
+                    .collect(Collectors.joining("\n"));
+            contentbox.setValue(content);
+        } catch (IOException ex) {
+            UIMessages.showMessage("Error reading file: " + file.getName() + ". " + ex.getMessage(), MessageType.ERROR);
+            ex.getMessage();
+        }
+    }
 
-	public File getFile() {
-		return file;
-	}
+    private void initActions() {
+        ActionLoader<TextEditorAction> loader = new ActionLoader<>(TextEditorAction.class);
+        loader.load().forEach(a -> toolbar.addAction(a));
+    }
 
-	public Textarea getContentbox() {
-		return contentbox;
-	}
+    public File getFile() {
+        return file;
+    }
 
-	public void show() {
-		setTitle("TextEditor - " + file.getName());
-		setWidth("90%");
-		setHeight("90%");
-		setPage(ZKUtil.getFirstPage());
-		doModal();
-	}
+    public Textbox getContentbox() {
+        return contentbox;
+    }
+
+    public void show() {
+        setTitle("TextEditor - " + file.getName());
+        setWidth("90%");
+        setHeight("90%");
+        setPage(ZKUtil.getFirstPage());
+        doModal();
+    }
 }

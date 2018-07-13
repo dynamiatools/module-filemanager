@@ -1,8 +1,5 @@
-.text-editor .text-editor-content{
-    font-family: monospace;
-    overflow: scroll;
-    padding: 10px;
-    background: #f9fbfa;
-    border-radius: 5px;
+.text-editor .data-ace {
+    height: 100%;
+    width: 100%;
 }
 

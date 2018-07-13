@@ -21,6 +21,13 @@
             <artifactId>tools.dynamia.zk.crud</artifactId>
             <version>${dynatools.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.zkoss</groupId>
+            <artifactId>datahandler-ace-code-editor</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
     </dependencies>
     
     <distributionManagement>
