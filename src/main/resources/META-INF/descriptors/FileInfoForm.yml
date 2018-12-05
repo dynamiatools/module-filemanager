@@ -4,27 +4,33 @@ autofields: false
 
 
 fields:
-    
- 
-    name:
-    fileSize:
-        label: Size
-      
-    fileDate:
-        component: textbox
-        label: Last update
-        params:
-          converter: converters.DateTime
-       
-        
-  
-    extension:
-    description:
-    icon:
-    readOnly:
-    directory:
-    image:
-                
-                
+
+
+  name:
+    params:
+      span: 2
+  fileSize:
+    label: Size
+  extension:
+  fileDate:
+    component: textbox
+    label: Last update
+    params:
+      converter: converters.DateTime
+      span: 2
+
+
+  description:
+    params:
+      span: 2
+  icon:
+    params:
+      span: 2
+  readOnly:
+  directory:
+  image:
+  virtual:
+
+
 layout:
-  columns: 1
+  columns: 2

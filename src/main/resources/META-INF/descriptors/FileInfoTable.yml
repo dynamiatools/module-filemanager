@@ -1,29 +1,30 @@
 view: table
 beanClass: tools.dynamia.io.FileInfo
 autofields: false
-customizer: 
+customizer:
 
 fields:
-    
-    icon:
-        label: T
-        component: iconimage
-        params:
-            header:
-                width: 20px
-    name:
-    fileSize:
-        label: Size
-        params:
-            header:
-                width: 100px
-                align: right
-    fileDate:
-        label: Last update
-        params:
-            header:
-                width: 200px
-                align: center
+
+  icon:
+    label: T
+    component: iconimage
+    params:
+      style: 'float:right'
+      header:
+        width: 24px
+  name:
+  fileSize:
+    label: Size
+    params:
+      header:
+        width: 100px
+        align: right
+  fileDate:
+    label: Last update
+    params:
+      header:
+        width: 200px
+        align: center
                 
                 
 

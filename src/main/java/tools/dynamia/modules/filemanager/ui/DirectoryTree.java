@@ -1,42 +1,52 @@
 /*
+ *  Copyright (c) 2018 Dynamia Soluciones IT SAS and the original author or authors.
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+/*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
 package tools.dynamia.modules.filemanager.ui;
 
-import java.io.File;
-import java.io.FileFilter;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Tree;
 import org.zkoss.zul.Treeitem;
-
 import tools.dynamia.integration.Containers;
 import tools.dynamia.io.FileInfo;
 import tools.dynamia.io.VirtualFileProvider;
-import tools.dynamia.zk.crud.ui.ChildrenLoader;
-import tools.dynamia.zk.crud.ui.EntityTreeModel;
-import tools.dynamia.zk.crud.ui.EntityTreeNode;
-import tools.dynamia.zk.crud.ui.LazyEntityTreeNode;
+import tools.dynamia.zk.crud.ui.*;
+import tools.dynamia.zk.viewers.tree.TreeViewNode;
+
+import java.io.File;
+import java.io.FileFilter;
+import java.nio.file.Path;
+import java.util.*;
 
 /**
- *
- * @author mario
+ * @author Mario Serrano Leones
  */
 public class DirectoryTree extends Tree implements ChildrenLoader<FileInfo>, EventListener<Event> {
 
     private File selected;
     private EntityTreeModel<FileInfo> treeModel;
 
-    private EntityTreeNode<FileInfo> rootNode;
+    private RootTreeNode<FileInfo> rootNode;
+    private DirectoryTreeNode rootDirectoryNode;
     private boolean showHiddenFolders;
     private final File rootDirectory;
 
@@ -83,13 +93,13 @@ public class DirectoryTree extends Tree implements ChildrenLoader<FileInfo>, Eve
     private void initModel() {
         FileInfo file = new FileInfo(rootDirectory);
 
-        rootNode = new EntityTreeNode<>(file);
-        EntityTreeNode<FileInfo> rootFileNode = new DirectoryTreeNode(file,this);
+        rootNode = new RootTreeNode<>(file);
+        rootDirectoryNode = new DirectoryTreeNode(file, this);
 
-        rootNode.addChild(rootFileNode);
+        rootNode.addChild(rootDirectoryNode);
 
         treeModel = new EntityTreeModel<>(rootNode);
-     
+
         for (VirtualFileProvider virtualFileProvider : Containers.get().findObjects(VirtualFileProvider.class)) {
 
             virtualFileProvider.getVirtualFiles()
@@ -118,7 +128,7 @@ public class DirectoryTree extends Tree implements ChildrenLoader<FileInfo>, Eve
             }
         }
 
-        Collections.sort(subdirectories, (o1, o2) -> o1.getData().getName().toLowerCase().compareTo(o2.getData().getName().toLowerCase()));
+        Collections.sort(subdirectories, Comparator.comparing(o -> o.getData().getName().toLowerCase()));
 
         return subdirectories;
     }
@@ -150,6 +160,66 @@ public class DirectoryTree extends Tree implements ChildrenLoader<FileInfo>, Eve
     public void setSelected(File value) {
         this.selected = value;
         Events.postEvent(new Event(Events.ON_SELECT, this, value));
+    }
+
+    public void open(File directory) {
+        if (rootDirectory.equals(directory)) {
+            rootNode.open();
+        } else {
+            DirectoryTreeNode startNode = rootDirectoryNode;
+            if (!treeModel.isSelectionEmpty()) {
+                startNode = (DirectoryTreeNode) treeModel.getSelection().stream().findFirst().orElse(null);
+                if (startNode.getParent() != null && !startNode.getParent().equals(rootNode)) {
+                    startNode = (DirectoryTreeNode) startNode.getParent();
+                }
+            }
+
+            DirectoryTreeNode node = findNode(startNode, directory);
+            if (node != null) {
+                if (node.getParent() != null) {
+                    treeModel.addOpenObject(node.getParent());
+                }
+                treeModel.addOpenObject(node);
+                treeModel.setSelection(Arrays.asList(node));
+                selected = directory;
+            }
+        }
+    }
+
+    /**
+     * Find a directory node recurvise starting from parent node or root node
+     *
+     * @param parentNode
+     * @param directory
+     * @return
+     */
+    public DirectoryTreeNode findNode(DirectoryTreeNode parentNode, File directory) {
+        if (parentNode.getData().getFile().equals(directory)) {
+            return parentNode;
+        } else {
+            if (!parentNode.isOpen()) {
+                loadChildren(parentNode);
+            }
+            //Find direct children
+            for (TreeViewNode<FileInfo> child : parentNode.getChildren()) {
+                if (child.getData().getFile().equals(directory)) {
+                    return (DirectoryTreeNode) child;
+                }
+            }
+
+            //Find Tree
+            for (TreeViewNode<FileInfo> child : parentNode.getChildren()) {
+                DirectoryTreeNode node = findNode((DirectoryTreeNode) child, directory);
+                if (node != null) {
+                    return node;
+                }
+            }
+        }
+        return null;
+    }
+
+    public DirectoryTreeNode getRootDirectoryNode() {
+        return rootDirectoryNode;
     }
 
     public boolean isShowHiddenFolders() {
