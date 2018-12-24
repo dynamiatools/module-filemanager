@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>tools.dynamia.modules</groupId>
+    <artifactId>tools.dynamia.modules.filemanager</artifactId>
+    <name>Dynamia Modules - FileManager (${project.version})</name>
+    <version>3.0.0</version>
+    <packaging>jar</packaging>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        
+        <dynatools.version>3.1.0.Final</dynatools.version>
+    </properties>
+    
+    
+    <dependencies>
+        <dependency>
+            <groupId>tools.dynamia</groupId>
+            <artifactId>tools.dynamia.zk.crud</artifactId>
+            <version>${dynatools.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>tools.dynamia.zk.addons</groupId>
+            <artifactId>aceditor-zk</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+    </dependencies>
+    
+    <distributionManagement>
+        <repository>
+            <id>nexus</id>
+            <url>http://nexus.dynamiaweb.com/repository/releases/</url>
+        </repository>        
+    </distributionManagement>
+  
+</project>
