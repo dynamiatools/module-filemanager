@@ -197,7 +197,9 @@ public class FileManager extends Div implements ActionEventBuilder, View<FileInf
         layout.getEast().setSplittable(true);
         loadActions();
         loadPreview();
-        loadFiles(currentDirectory.getFile());
+        if (currentDirectory != null) {
+            loadFiles(currentDirectory.getFile());
+        }
 
     }
 
