@@ -19,7 +19,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>tools.dynamia.modules</groupId>
     <artifactId>tools.dynamia.modules.filemanager</artifactId>
-    <name>Dynamia Modules - FileManager (${project.version})</name>
+    <name>Dynamia Modules - FileManager</name>
     <version>3.2.0</version>
     <packaging>jar</packaging>
     <properties>
@@ -35,7 +35,7 @@
         <dependency>
             <groupId>tools.dynamia</groupId>
             <artifactId>tools.dynamia.zk.crud</artifactId>
-            <version>${dynatools.version}</version>
+            <version>${dynamiatools.version}</version>
         </dependency>
 
         <dependency>
