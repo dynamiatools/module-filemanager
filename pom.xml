@@ -21,15 +21,16 @@
     <groupId>tools.dynamia.modules</groupId>
     <artifactId>tools.dynamia.modules.filemanager</artifactId>
     <name>Dynamia Modules - FileManager</name>
-    <version>3.3.0</version>
+    <version>4.0.0</version>
     <packaging>jar</packaging>
     <url>http://www.dynamia.tools/module-entityfiles</url>
     <description>DynamiaTools extension to files manager and explorer</description>
     <inceptionYear>2017</inceptionYear>
 
+
     <organization>
         <name>Dynamia Soluciones IT SAS</name>
-        <url>http://www.dynamiasoluciones.com</url>
+        <url>https://www.dynamiasoluciones.com</url>
     </organization>
 
     <developers>
@@ -43,23 +44,24 @@
 
     <licenses>
         <license>
-            <name>GNU Lesser General Public License (LGPL v3)</name>
-            <url>https://www.gnu.org/licenses/lgpl-3.0.en.html</url>
+            <name>APACHE LICENSE, VERSION 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0</url>
             <distribution>repo</distribution>
         </license>
     </licenses>
 
+
     <scm>
-        <url>https://github.com/dynamia-projects/module-filemanager</url>
+        <url>https://github.com/dynamiatools/module-filemanager</url>
     </scm>
 
 
     <properties>
+        <dynamiatools.version>4.2.0</dynamiatools.version>
+        <java.version>11</java.version>
+        <maven.compiler>3.11.0</maven.compiler>
+        <source.encoding>UTF-8</source.encoding>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-
-        <dynamiatools.version>3.6.0.Final</dynamiatools.version>
     </properties>
 
 
@@ -80,6 +82,16 @@
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven.compiler}</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <encoding>${source.encoding}</encoding>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>license-maven-plugin</artifactId>
