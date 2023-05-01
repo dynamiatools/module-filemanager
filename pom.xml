@@ -21,7 +21,7 @@
     <groupId>tools.dynamia.modules</groupId>
     <artifactId>tools.dynamia.modules.filemanager</artifactId>
     <name>Dynamia Modules - FileManager</name>
-    <version>4.0.0</version>
+    <version>5.0.0</version>
     <packaging>jar</packaging>
     <url>http://www.dynamia.tools/module-entityfiles</url>
     <description>DynamiaTools extension to files manager and explorer</description>
@@ -57,8 +57,8 @@
 
 
     <properties>
-        <dynamiatools.version>4.2.0</dynamiatools.version>
-        <java.version>11</java.version>
+        <dynamiatools.version>5.0.0</dynamiatools.version>
+        <java.version>17</java.version>
         <maven.compiler>3.11.0</maven.compiler>
         <source.encoding>UTF-8</source.encoding>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
