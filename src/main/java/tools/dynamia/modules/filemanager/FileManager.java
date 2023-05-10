@@ -45,6 +45,7 @@ import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.*;
 import tools.dynamia.actions.ActionEvent;
 import tools.dynamia.actions.ActionEventBuilder;
+import tools.dynamia.actions.Actions;
 import tools.dynamia.integration.Containers;
 import tools.dynamia.io.FileInfo;
 import tools.dynamia.io.VirtualFile;
@@ -68,6 +69,7 @@ import java.util.Map;
 
 /**
  * Visual component from file explorer
+ *
  * @author Mario Serrano Leones
  */
 public class FileManager extends Div implements ActionEventBuilder, View<FileInfo> {
@@ -374,7 +376,7 @@ public class FileManager extends Div implements ActionEventBuilder, View<FileInf
                 if (action.getAttribute("separator") == Boolean.TRUE) {
                     contextMenu.appendChild(new Menuseparator());
                 }
-                Menuitem item = menuRenderer.render(action, this);
+                Menuitem item = Actions.render(menuRenderer, action, this);
                 contextMenu.appendChild(item);
             }
 
